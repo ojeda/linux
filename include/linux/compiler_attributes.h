@@ -32,6 +32,7 @@
 # define __GCC4_has_attribute___assume_aligned__      (__GNUC_MINOR__ >= 9)
 # define __GCC4_has_attribute___designated_init__     0
 # define __GCC4_has_attribute___externally_visible__  1
+# define __GCC4_has_attribute___fallthrough__         0
 # define __GCC4_has_attribute___noclone__             1
 # define __GCC4_has_attribute___optimize__            1
 # define __GCC4_has_attribute___nonstring__           0
@@ -131,6 +132,23 @@
 # define __visible                      __attribute__((__externally_visible__))
 #else
 # define __visible
+#endif
+
+/*
+ * Currently, most of the kernel uses fallthrough comments to silence
+ * the -Wimplicit-fallthrough warnings (enabled by -Wextra, in W=1).
+ * For new instances, please use this attribute instead.
+ *
+ * Optional: only supported since gcc >= 7.1
+ * Optional: not supported by clang
+ * Optional: not supported by icc
+ *
+ *   gcc: https://gcc.gnu.org/onlinedocs/gcc/Statement-Attributes.html#index-fallthrough-statement-attribute
+ */
+#if __has_attribute(__fallthrough__)
+# define __fallthrough                  __attribute__((__fallthrough__))
+#else
+# define __fallthrough
 #endif
 
 /*
