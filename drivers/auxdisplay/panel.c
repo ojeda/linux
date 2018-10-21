@@ -1367,7 +1367,7 @@ static void panel_process_inputs(void)
 				break;
 			input->rise_timer = 0;
 			input->state = INPUT_ST_RISING;
-			/* fall through */
+			__fallthrough;
 		case INPUT_ST_RISING:
 			if ((phys_curr & input->mask) != input->value) {
 				input->state = INPUT_ST_LOW;
@@ -1380,11 +1380,11 @@ static void panel_process_inputs(void)
 			}
 			input->high_timer = 0;
 			input->state = INPUT_ST_HIGH;
-			/* fall through */
+			__fallthrough;
 		case INPUT_ST_HIGH:
 			if (input_state_high(input))
 				break;
-			/* fall through */
+			__fallthrough;
 		case INPUT_ST_FALLING:
 			input_state_falling(input);
 		}
