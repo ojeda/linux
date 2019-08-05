@@ -186,6 +186,17 @@
 #endif
 
 /*
+ * Currently available as warn_unused_result in compilers; however,
+ * C++17 standarized it as [[nodiscard]], and it is already in the C2x draft
+ * with the same spelling. Therefore, we name it as such so that in the future
+ * we simply rename it here.
+ *
+ *   gcc: https://gcc.gnu.org/onlinedocs/gcc/Common-Function-Attributes.html#index-warn_005funused_005fresult-function-attribute
+ * clang: https://clang.llvm.org/docs/AttributeReference.html#nodiscard-warn-unused-result
+ */
+#define __nodiscard                     __attribute__((__warn_unused_result__))
+
+/*
  * Note the missing underscores.
  *
  *   gcc: https://gcc.gnu.org/onlinedocs/gcc/Common-Function-Attributes.html#index-noinline-function-attribute
