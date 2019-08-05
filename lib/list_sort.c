@@ -7,7 +7,7 @@
 #include <linux/list_sort.h>
 #include <linux/list.h>
 
-typedef int __attribute__((nonnull(2,3))) (*cmp_func)(void *,
+typedef int __nonnull_args(2,3) (*cmp_func)(void *,
 		struct list_head const *, struct list_head const *);
 
 /*
@@ -15,7 +15,7 @@ typedef int __attribute__((nonnull(2,3))) (*cmp_func)(void *,
  * to chaining of merge() calls: null-terminated, no reserved or
  * sentinel head node, "prev" links not maintained.
  */
-__attribute__((nonnull(2,3,4)))
+__nonnull_args(2,3,4)
 static struct list_head *merge(void *priv, cmp_func cmp,
 				struct list_head *a, struct list_head *b)
 {
@@ -51,7 +51,7 @@ static struct list_head *merge(void *priv, cmp_func cmp,
  * prev-link restoration pass, or maintaining the prev links
  * throughout.
  */
-__attribute__((nonnull(2,3,4,5)))
+__nonnull_args(2,3,4,5)
 static void merge_final(void *priv, cmp_func cmp, struct list_head *head,
 			struct list_head *a, struct list_head *b)
 {
@@ -184,7 +184,7 @@ static void merge_final(void *priv, cmp_func cmp, struct list_head *head,
  * of size 2^k varies from 2^(k-1) (cases 3 and 5 when x == 0) to
  * 2^(k+1) - 1 (second merge of case 5 when x == 2^(k-1) - 1).
  */
-__attribute__((nonnull(2,3)))
+__nonnull_args(2,3)
 void list_sort(void *priv, struct list_head *head,
 		int (*cmp)(void *priv, struct list_head *a,
 			struct list_head *b))
