@@ -305,7 +305,7 @@ void i915_request_cancel_breadcrumb(struct i915_request *request);
 long i915_request_wait(struct i915_request *rq,
 		       unsigned int flags,
 		       long timeout)
-	__attribute__((nonnull(1)));
+	__nonnull;
 #define I915_WAIT_INTERRUPTIBLE	BIT(0)
 #define I915_WAIT_LOCKED	BIT(1) /* struct_mutex held, handle GPU reset */
 #define I915_WAIT_PRIORITY	BIT(2) /* small priority bump for the request */
