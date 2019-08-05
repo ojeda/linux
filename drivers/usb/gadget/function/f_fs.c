@@ -257,9 +257,9 @@ static void ffs_closed(struct ffs_data *ffs);
 /* Misc helper functions ****************************************************/
 
 static int ffs_mutex_lock(struct mutex *mutex, unsigned nonblock)
-	__attribute__((warn_unused_result, nonnull));
+	__nonnull __attribute__((warn_unused_result));
 static char *ffs_prepare_buffer(const char __user *buf, size_t len)
-	__attribute__((warn_unused_result, nonnull));
+	__nonnull __attribute__((warn_unused_result));
 
 
 /* Control file aka ep0 *****************************************************/
