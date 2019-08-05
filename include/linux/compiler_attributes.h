@@ -194,6 +194,17 @@
 #define   noinline                      __attribute__((__noinline__))
 
 /*
+ * Avoid using the zero arguments __nonnull, i.e. `__nonnull()`. While gcc
+ * and clang behave as if __nonnull was given, icc treats it as if no argument
+ * is marked.
+ *
+ *   gcc: https://gcc.gnu.org/onlinedocs/gcc/Common-Function-Attributes.html#index-nonnull-function-attribute
+ * clang: https://clang.llvm.org/docs/AttributeReference.html#id363
+ */
+#define __nonnull                       __attribute__((__nonnull__))
+#define __nonnull_args(...)             __attribute__((__nonnull__(__VA_ARGS__)))
+
+/*
  * Optional: only supported since gcc >= 8
  * Optional: not supported by clang
  * Optional: not supported by icc
