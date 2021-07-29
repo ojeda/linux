@@ -10,7 +10,7 @@ jobs:
 
     strategy:
       matrix:
-        arch: [arm, arm64, ppc64le, riscv64, x86_64]
+        arch: [arm, arm64, ppc64le, riscv64, x86, x86_64]
         toolchain: [gcc, clang, llvm]
         config: [debug, release]
         rustc: [1.54.0]
@@ -74,6 +74,13 @@ jobs:
               ${{ env.MATRIX_NAME  }}-ccache-
 
       # Setup: variables
+      - if: matrix.arch == 'x86'
+        run: |
+          echo 'IMAGE_PATH=arch/x86/boot/bzImage' >> $GITHUB_ENV
+          echo 'QEMU_ARCH=i386' >> $GITHUB_ENV
+          echo 'QEMU_MACHINE=pc' >> $GITHUB_ENV
+          echo 'QEMU_CPU=Cascadelake-Server' >> $GITHUB_ENV
+          echo 'QEMU_APPEND=console=ttyS0' >> $GITHUB_ENV
       - if: matrix.arch == 'x86_64'
         run: |
           echo 'IMAGE_PATH=arch/x86/boot/bzImage' >> $GITHUB_ENV
@@ -164,7 +171,7 @@ jobs:
       - run: sudo apt-get install -y libelf-dev
 
       # Setup: QEMU
-      - if: matrix.arch == 'x86_64'
+      - if: matrix.arch == 'x86' || matrix.arch == 'x86_64'
         run: sudo apt-get install -y qemu-system-x86
       - if: matrix.arch == 'arm' || matrix.arch == 'arm64'
         run: sudo apt-get install -y qemu-system-arm

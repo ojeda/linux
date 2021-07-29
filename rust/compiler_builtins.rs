@@ -134,6 +134,13 @@ define_panicking_intrinsics!("`u64` division/modulo should not be used", {
     __mulodi4,
 });
 
+#[cfg(target_arch = "x86")]
+define_panicking_intrinsics!("`u64` multiplication with overflow/division/modulo should not be used", {
+    __mulodi4,
+    __umoddi3,
+    __udivdi3,
+});
+
 extern "C" {
     fn rust_helper_BUG() -> !;
 }

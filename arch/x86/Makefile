@@ -88,6 +88,8 @@ ifeq ($(CONFIG_X86_32),y)
 			KBUILD_CFLAGS += -mstack-protector-guard=global
 		endif
 	endif
+
+        KBUILD_RUST_TARGET := $(srctree)/arch/x86/rust/i686.json
 else
         BITS := 64
         UTS_MACHINE := x86_64

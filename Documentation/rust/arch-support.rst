@@ -32,4 +32,4 @@ support corresponds to ``S`` values in the ``MAINTAINERS`` file.
      - ``riscv64`` only
    * - ``x86``
      - Maintained
-     - ``x86_64`` only
+     - None
