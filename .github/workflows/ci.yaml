@@ -1,7 +1,7 @@
 on:
   pull_request: {}
   push:
-    branches: [rust]
+    branches: [x86]
 
 jobs:
   ci:
@@ -9,8 +9,9 @@ jobs:
     timeout-minutes: 20
 
     strategy:
+      fail-fast: false
       matrix:
-        arch: [arm, arm64, ppc64le, riscv64, x86, x86_64]
+        arch: [x86]
         toolchain: [gcc, clang, llvm]
         config: [debug, release]
         rustc: [1.54.0]
@@ -27,36 +28,6 @@ jobs:
             toolchain: llvm
           - arch: riscv64
             toolchain: llvm
-
-        # A few independent combinations to avoid exploding the matrix:
-        #   - The other option for `output`.
-        #   - Different releases for `rustc`.
-        #   - The other three (`install`, `sysroot`) combinations
-        #     (they are interrelated, so the cross-product needs to be tested)
-        include:
-          - arch: arm64
-            toolchain: gcc
-            config: debug
-            rustc: 1.54.0
-            output: build
-            install: rustup
-            sysroot: custom
-
-          - arch: ppc64le
-            toolchain: clang
-            config: release
-            rustc: 1.54.0
-            output: build
-            install: standalone
-            sysroot: common
-
-          - arch: x86_64
-            toolchain: llvm
-            config: debug
-            rustc: 1.54.0
-            output: build
-            install: standalone
-            sysroot: custom
 
     steps:
       # Setup: checkout
@@ -81,6 +52,7 @@ jobs:
           echo 'QEMU_MACHINE=pc' >> $GITHUB_ENV
           echo 'QEMU_CPU=Cascadelake-Server' >> $GITHUB_ENV
           echo 'QEMU_APPEND=console=ttyS0' >> $GITHUB_ENV
+          echo 'QEMU_ARGS=-bios bin/bios-256k.bin' >> $GITHUB_ENV
       - if: matrix.arch == 'x86_64'
         run: |
           echo 'IMAGE_PATH=arch/x86/boot/bzImage' >> $GITHUB_ENV
@@ -171,7 +143,12 @@ jobs:
       - run: sudo apt-get install -y libelf-dev
 
       # Setup: QEMU
-      - if: matrix.arch == 'x86' || matrix.arch == 'x86_64'
+      - if: matrix.arch == 'x86'
+        run: |
+          curl -o bin/qemu-system-i386 https://raw.githubusercontent.com/Rust-for-Linux/ci-bin/master/qemu-6.0.0/bin/qemu-system-i386
+          chmod u+x bin/qemu-system-i386
+          curl -o bin/bios-256k.bin https://raw.githubusercontent.com/Rust-for-Linux/ci-bin/master/qemu-6.0.0/share/qemu/bios-256k.bin
+      - if: matrix.arch == 'x86_64'
         run: sudo apt-get install -y qemu-system-x86
       - if: matrix.arch == 'arm' || matrix.arch == 'arm64'
         run: sudo apt-get install -y qemu-system-arm
@@ -397,6 +374,9 @@ jobs:
             ${{ env.BUILD_DIR }}samples/rust/*.ko \
             ${{ env.BUILD_DIR }}drivers/android/rust_binder.o \
             ${{ env.BUILD_DIR }}rust/*.o \
+            ${{ env.BUILD_DIR }}vmlinux
+
+          file \
             ${{ env.BUILD_DIR }}vmlinux
 
       # Clippy
