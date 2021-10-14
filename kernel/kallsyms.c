@@ -952,8 +952,18 @@ static const struct proc_ops kallsyms_proc_ops = {
 	.proc_release	= seq_release_private,
 };
 
+/* Define a function with the longest symbol possible */
+void
+#include "longest_symbol_possible"
+() {}
+
 static int __init kallsyms_init(void)
 {
+	/* Check that the longest symbol possible is supported */
+	BUG_ON(!kallsyms_lookup_name(
+		#include "longest_symbol_possible"
+	));
+
 	proc_create("kallsyms", 0444, NULL, &kallsyms_proc_ops);
 	return 0;
 }
