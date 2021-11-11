@@ -82,6 +82,8 @@ pub mod platdev;
 mod types;
 pub mod user_ptr;
 
+pub mod mentor;
+
 #[doc(hidden)]
 pub use build_error::build_error;
 

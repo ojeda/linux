@@ -1,0 +1,21 @@
+# SPDX-License-Identifier: GPL-2.0
+
+menuconfig MENTOR
+	bool "Mentor Support"
+	help
+	  This enables Mentor support.
+
+	  If unsure, say N.
+
+if MENTOR
+
+config MENTOR_TEST
+	tristate "Mentor test module"
+	help
+	  Say Y or M here to build support for the Mentor test module.
+
+	  If driver is built as a module it will be called mentor_test.
+
+	  If unsure, say N.
+
+endif # MENTOR

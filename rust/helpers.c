@@ -12,6 +12,7 @@
 #include <linux/platform_device.h>
 #include <linux/security.h>
 #include <asm/io.h>
+#include <linux/mentor.h>
 
 __noreturn void rust_helper_BUG(void)
 {
@@ -322,6 +323,12 @@ void rust_helper_write_seqcount_end(seqcount_t *s)
 	do_write_seqcount_end(s);
 }
 EXPORT_SYMBOL_GPL(rust_helper_write_seqcount_end);
+
+u32 rust_helper_mentor_read(u8 addr)
+{
+	return mentor_read(addr);
+}
+EXPORT_SYMBOL_GPL(rust_helper_mentor_read);
 
 /* We use bindgen's --size_t-is-usize option to bind the C size_t type
  * as the Rust usize type, so we can use it in contexts where Rust
