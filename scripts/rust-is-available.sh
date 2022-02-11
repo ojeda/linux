@@ -21,6 +21,19 @@ get_canonical_version()
 	echo $((100000 * $1 + 100 * $2 + $3))
 }
 
+# Like `get_canonical_version`, but without the patch version.
+#
+# For "too new" checks (which are a warning), taking into account
+# the patch version is too noisy, e.g. if the expected Rust version
+# is 1.58.0, we do not want to print a warning for 1.58.1, only for
+# 1.59.0 and above.
+get_canonical_version_no_patch()
+{
+	IFS=.
+	set -- $1
+	echo $((100000 * $1 + 100 * $2))
+}
+
 # Check that the Rust compiler exists.
 if ! command -v "$RUSTC" >/dev/null; then
 	if [ "$1" = -v ]; then
@@ -62,7 +75,9 @@ if [ "$rust_compiler_cversion" -lt "$rust_compiler_min_cversion" ]; then
 	fi
 	exit 1
 fi
-if [ "$1" = -v ] && [ "$rust_compiler_cversion" -gt "$rust_compiler_min_cversion" ]; then
+rust_compiler_cversion_no_patch=$(get_canonical_version_no_patch $rust_compiler_version)
+rust_compiler_min_cversion_no_patch=$(get_canonical_version_no_patch $rust_compiler_min_version)
+if [ "$1" = -v ] && [ "$rust_compiler_cversion_no_patch" -gt "$rust_compiler_min_cversion_no_patch" ]; then
 	echo >&2 "***"
 	echo >&2 "*** Rust compiler '$RUSTC' is too new. This may or may not work."
 	echo >&2 "***   Your version:     $rust_compiler_version"
@@ -91,7 +106,9 @@ if [ "$rust_bindings_generator_cversion" -lt "$rust_bindings_generator_min_cvers
 	fi
 	exit 1
 fi
-if [ "$1" = -v ] && [ "$rust_bindings_generator_cversion" -gt "$rust_bindings_generator_min_cversion" ]; then
+rust_bindings_generator_cversion_no_patch=$(get_canonical_version_no_patch $rust_bindings_generator_version)
+rust_bindings_generator_min_cversion_no_patch=$(get_canonical_version_no_patch $rust_bindings_generator_min_version)
+if [ "$1" = -v ] && [ "$rust_bindings_generator_cversion_no_patch" -gt "$rust_bindings_generator_min_cversion_no_patch" ]; then
 	echo >&2 "***"
 	echo >&2 "*** Rust bindings generator '$BINDGEN' is too new. This may or may not work."
 	echo >&2 "***   Your version:     $rust_bindings_generator_version"
