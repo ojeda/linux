@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: Apache-2.0 OR MIT
+
 #[cfg(span_locations)]
 use crate::location::LineColumn;
 use crate::parse::{self, Cursor};

@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: Apache-2.0 OR MIT
+
 use crate::detection::inside_proc_macro;
 #[cfg(span_locations)]
 use crate::location::LineColumn;
