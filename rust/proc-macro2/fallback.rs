@@ -724,11 +724,11 @@ impl Ident {
 }
 
 pub(crate) fn is_ident_start(c: char) -> bool {
-    c == '_' || unicode_ident::is_xid_start(c)
+    c == '_' || c.is_ascii_alphabetic()
 }
 
 pub(crate) fn is_ident_continue(c: char) -> bool {
-    unicode_ident::is_xid_continue(c)
+    c == '_' || c.is_ascii_alphanumeric()
 }
 
 fn validate_ident(string: &str, raw: bool) {
