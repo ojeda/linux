@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: Apache-2.0 OR MIT
+
 pub use std::clone::Clone;
 pub use std::cmp::{Eq, PartialEq};
 pub use std::default::Default;

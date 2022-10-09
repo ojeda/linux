@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: Apache-2.0 OR MIT
+
 // Type for a syntax tree node that is reserved for future use.
 //
 // For example ExprReference contains a field `raw` of type Reserved. If `&raw

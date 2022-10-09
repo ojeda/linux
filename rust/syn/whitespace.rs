@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: Apache-2.0 OR MIT
+
 pub fn skip(mut s: &str) -> &str {
     'skip: while !s.is_empty() {
         let byte = s.as_bytes()[0];

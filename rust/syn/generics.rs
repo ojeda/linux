@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: Apache-2.0 OR MIT
+
 use super::*;
 use crate::punctuated::{Iter, IterMut, Punctuated};
 #[cfg(all(feature = "printing", feature = "extra-traits"))]
