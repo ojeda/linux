@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: Apache-2.0 OR MIT
+
 use super::*;
 use crate::token::{Brace, Bracket, Paren};
 use proc_macro2::TokenStream;

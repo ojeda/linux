@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: Apache-2.0 OR MIT
+
 //! Extension traits to provide parsing methods on foreign types.
 //!
 //! *This module is available only if Syn is built with the `"parsing"` feature.*
