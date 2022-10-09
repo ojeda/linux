@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: Apache-2.0 OR MIT
+
 #[cfg(feature = "fold")]
 pub(crate) mod fold {
     use crate::punctuated::{Pair, Punctuated};

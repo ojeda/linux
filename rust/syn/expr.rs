@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: Apache-2.0 OR MIT
+
 use crate::attr::Attribute;
 #[cfg(feature = "full")]
 use crate::generics::BoundLifetimes;
