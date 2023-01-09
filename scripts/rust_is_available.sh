@@ -35,6 +35,16 @@ print_docs_reference()
 warning=0
 trap 'if [ $? -ne 0 ] || [ $warning -ne 0 ]; then print_docs_reference; fi' EXIT
 
+# Check whether the script was invoked from Kbuild.
+if [ -z "${MAKEFLAGS+x}" ]; then
+	echo >&2 "***"
+	echo >&2 "*** This script is intended to be called from Kbuild."
+	echo >&2 "*** Please use the 'rustavailable' target to call it instead."
+	echo >&2 "*** Otherwise, the results may not be meaningful."
+	echo >&2 "***"
+	warning=1
+fi
+
 # Check that the Rust compiler exists.
 if ! command -v "$RUSTC" >/dev/null; then
 	echo >&2 "***"
