@@ -40,7 +40,7 @@ and run::
 
 Otherwise, fetch a standalone installer or install ``rustup`` from:
 
-	https://www.rust-lang.org
+	https://forge.rust-lang.org/infra/other-installation-methods.html#standalone
 
 
 Rust standard library source
