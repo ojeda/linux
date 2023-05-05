@@ -350,6 +350,7 @@ impl_deserialize_num! {
     uint_to_self!(u32:visit_u32 u64:visit_u64);
 }
 
+#[cfg(not(no_fp_fmt_parse))]
 impl_deserialize_num! {
     f32, deserialize_f32
     num_self!(f32:visit_f32);
@@ -358,6 +359,7 @@ impl_deserialize_num! {
     num_as_self!(u8:visit_u8 u16:visit_u16 u32:visit_u32 u64:visit_u64);
 }
 
+#[cfg(not(no_fp_fmt_parse))]
 impl_deserialize_num! {
     f64, deserialize_f64
     num_self!(f64:visit_f64);

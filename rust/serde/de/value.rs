@@ -298,7 +298,9 @@ primitive_deserializer!(u8, "a `u8`.", U8Deserializer, visit_u8);
 primitive_deserializer!(u16, "a `u16`.", U16Deserializer, visit_u16);
 primitive_deserializer!(u64, "a `u64`.", U64Deserializer, visit_u64);
 primitive_deserializer!(usize, "a `usize`.", UsizeDeserializer, visit_u64 as u64);
+#[cfg(not(no_fp_fmt_parse))]
 primitive_deserializer!(f32, "an `f32`.", F32Deserializer, visit_f32);
+#[cfg(not(no_fp_fmt_parse))]
 primitive_deserializer!(f64, "an `f64`.", F64Deserializer, visit_f64);
 primitive_deserializer!(char, "a `char`.", CharDeserializer, visit_char);
 

@@ -55,11 +55,15 @@ impl<'a, 'b> Serializer for &'a mut fmt::Formatter<'b> {
         serialize_u16: u16,
         serialize_u32: u32,
         serialize_u64: u64,
-        serialize_f32: f32,
-        serialize_f64: f64,
         serialize_char: char,
         serialize_str: &str,
         serialize_unit_struct: &'static str,
+    }
+
+    #[cfg(not(no_fp_fmt_parse))]
+    fmt_primitives! {
+        serialize_f32: f32,
+        serialize_f64: f64,
     }
 
     serde_if_integer128! {

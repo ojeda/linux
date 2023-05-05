@@ -644,6 +644,7 @@ pub trait Serializer: Sized {
     ///     }
     /// }
     /// ```
+    #[cfg(not(no_fp_fmt_parse))]
     fn serialize_f32(self, v: f32) -> Result<Self::Ok, Self::Error>;
 
     /// Serialize an `f64` value.
@@ -662,6 +663,7 @@ pub trait Serializer: Sized {
     ///     }
     /// }
     /// ```
+    #[cfg(not(no_fp_fmt_parse))]
     fn serialize_f64(self, v: f64) -> Result<Self::Ok, Self::Error>;
 
     /// Serialize a character.

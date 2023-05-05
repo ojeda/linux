@@ -152,6 +152,7 @@ impl<'de> Visitor<'de> for IgnoredAny {
         }
     }
 
+    #[cfg(not(no_fp_fmt_parse))]
     #[inline]
     fn visit_f64<E>(self, x: f64) -> Result<Self::Value, E> {
         let _ = x;

@@ -29,7 +29,9 @@ primitive_impl!(u8, serialize_u8);
 primitive_impl!(u16, serialize_u16);
 primitive_impl!(u32, serialize_u32);
 primitive_impl!(u64, serialize_u64);
+#[cfg(not(no_fp_fmt_parse))]
 primitive_impl!(f32, serialize_f32);
+#[cfg(not(no_fp_fmt_parse))]
 primitive_impl!(f64, serialize_f64);
 primitive_impl!(char, serialize_char);
 
