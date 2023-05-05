@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: Apache-2.0 OR MIT
+
 //! This module contains `Impossible` serializer and its implementations.
 
 use lib::*;

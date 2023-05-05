@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: Apache-2.0 OR MIT
+
 //! Building blocks for deserializing basic values using the `IntoDeserializer`
 //! trait.
 //!

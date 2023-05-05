@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: Apache-2.0 OR MIT
+
 /// Conditional compilation depending on whether Serde is built with support for
 /// 128-bit integers.
 ///

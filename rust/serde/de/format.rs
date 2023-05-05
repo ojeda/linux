@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: Apache-2.0 OR MIT
+
 use lib::fmt::{self, Write};
 use lib::str;
 

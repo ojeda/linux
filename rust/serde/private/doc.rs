@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: Apache-2.0 OR MIT
+
 // Used only by Serde doc tests. Not public API.
 
 use lib::*;

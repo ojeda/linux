@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: Apache-2.0 OR MIT
+
 use lib::{Debug, Display};
 
 /// Either a re-export of std::error::Error or a new identical trait, depending

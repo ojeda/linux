@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: Apache-2.0 OR MIT
+
 // Super explicit first paragraph because this shows up at the top level and
 // trips up people who are just looking for basic Serialize / Deserialize
 // documentation.

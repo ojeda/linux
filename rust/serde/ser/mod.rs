@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: Apache-2.0 OR MIT
+
 //! Generic data structure serialization framework.
 //!
 //! The two most important traits in this module are [`Serialize`] and

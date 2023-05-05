@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: Apache-2.0 OR MIT
+
 use de::{Deserialize, DeserializeSeed, Deserializer};
 
 /// A DeserializeSeed helper for implementing deserialize_in_place Visitors.

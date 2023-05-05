@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: Apache-2.0 OR MIT
+
 use lib::*;
 
 const TAG_CONT: u8 = 0b1000_0000;

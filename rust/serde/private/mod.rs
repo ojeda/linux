@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: Apache-2.0 OR MIT
+
 #[cfg(not(no_serde_derive))]
 pub mod de;
 #[cfg(not(no_serde_derive))]
