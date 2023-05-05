@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: Apache-2.0 OR MIT
+
 //! A Serde ast, parsed from the Syn ast and ready to generate Rust code.
 
 use internals::attr;

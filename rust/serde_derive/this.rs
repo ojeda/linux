@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: Apache-2.0 OR MIT
+
 use internals::ast::Container;
 use syn::{Path, PathArguments, Token};
 

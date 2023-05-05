@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: Apache-2.0 OR MIT
+
 use internals::ast::{Container, Data, Field, Style};
 use internals::attr::{Identifier, TagType};
 use internals::{ungroup, Ctxt, Derive};

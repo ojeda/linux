@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: Apache-2.0 OR MIT
+
 //! This crate provides Serde's two derive macros.
 //!
 //! ```edition2018

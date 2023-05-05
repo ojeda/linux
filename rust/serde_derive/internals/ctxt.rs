@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: Apache-2.0 OR MIT
+
 use quote::ToTokens;
 use std::cell::RefCell;
 use std::fmt::Display;

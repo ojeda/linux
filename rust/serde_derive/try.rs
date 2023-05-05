@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: Apache-2.0 OR MIT
+
 use proc_macro2::{Punct, Spacing, TokenStream};
 
 // None of our generated code requires the `From::from` error conversion

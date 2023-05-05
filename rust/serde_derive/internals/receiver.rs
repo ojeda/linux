@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: Apache-2.0 OR MIT
+
 use internals::respan::respan;
 use proc_macro2::Span;
 use quote::ToTokens;
