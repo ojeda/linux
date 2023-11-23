@@ -72,7 +72,7 @@
  * __cfi_foo:
  *   endbr64
  *   subl 0x12345678, %r10d
- *   jz   foo
+ *   jz   foo			# call __bhi_args[\reg] when CONFIG_FINEIBT_BHI
  *   ud2
  *   nop
  * foo:
@@ -97,6 +97,7 @@ enum cfi_mode {
 	CFI_OFF,	/* Taditional / IBT depending on .config */
 	CFI_KCFI,	/* Optionally CALL_PADDING, IBT, RETPOLINE */
 	CFI_FINEIBT,	/* see arch/x86/kernel/alternative.c */
+	CFI_FINEIBT_BHI,
 };
 
 extern enum cfi_mode cfi_mode;
@@ -116,6 +117,7 @@ static inline int cfi_get_offset(void)
 {
 	switch (cfi_mode) {
 	case CFI_FINEIBT:
+	case CFI_FINEIBT_BHI:
 		return 16;
 	case CFI_KCFI:
 		if (IS_ENABLED(CONFIG_CALL_PADDING))
@@ -128,6 +130,7 @@ static inline int cfi_get_offset(void)
 #define cfi_get_offset cfi_get_offset
 
 extern u32 cfi_get_func_hash(void *func);
+extern int cfi_get_func_arity(void *func);
 
 #else
 static inline enum bug_trap_type handle_cfi_failure(struct pt_regs *regs)
@@ -137,6 +140,10 @@ static inline enum bug_trap_type handle_cfi_failure(struct pt_regs *regs)
 #define cfi_bpf_hash 0U
 #define cfi_bpf_subprog_hash 0U
 static inline u32 cfi_get_func_hash(void *func)
+{
+	return 0;
+}
+static inline int cfi_get_func_arity(void *func)
 {
 	return 0;
 }

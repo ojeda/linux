@@ -962,6 +962,7 @@ u32 cfi_get_func_hash(void *func)
 	func -= cfi_get_offset();
 	switch (cfi_mode) {
 	case CFI_FINEIBT:
+	case CFI_FINEIBT_BHI:
 		func += 7;
 		break;
 	case CFI_KCFI:
@@ -975,6 +976,21 @@ u32 cfi_get_func_hash(void *func)
 		return 0;
 
 	return hash;
+}
+
+int cfi_get_func_arity(void *func)
+{
+	bhi_thunk *target;
+	s32 disp;
+
+	if (cfi_mode != CFI_FINEIBT_BHI)
+		return 0;
+
+	if (get_kernel_nofault(disp, func-4))
+		return 0;
+
+	target = func + disp;
+	return target - __bhi_args;
 }
 #endif
 
@@ -1020,6 +1036,8 @@ static __init int cfi_parse_cmdline(char *str)
 			cfi_mode = CFI_KCFI;
 		} else if (!strcmp(str, "fineibt")) {
 			cfi_mode = CFI_FINEIBT;
+		} else if (IS_ENABLED(CONFIG_FINEIBT_BHI) && !strcmp(str, "fineibt+bhi")) {
+			cfi_mode = CFI_FINEIBT_BHI;
 		} else if (!strcmp(str, "norand")) {
 			cfi_rand = false;
 		} else {
@@ -1064,6 +1082,7 @@ asm(	".pushsection .rodata			\n"
 	"fineibt_preamble_start:		\n"
 	"	endbr64				\n"
 	"	subl	$0x12345678, %r10d	\n"
+	"fineibt_preamble_bhi_call:		\n"
 	"	je	fineibt_preamble_end	\n"
 	"	ud2				\n"
 	"	nop				\n"
@@ -1072,10 +1091,12 @@ asm(	".pushsection .rodata			\n"
 );
 
 extern u8 fineibt_preamble_start[];
+extern u8 fineibt_preamble_bhi_call[];
 extern u8 fineibt_preamble_end[];
 
 #define fineibt_preamble_size (fineibt_preamble_end - fineibt_preamble_start)
 #define fineibt_preamble_hash 7
+#define fineibt_preamble_bhi  (fineibt_preamble_bhi_call - fineibt_preamble_start)
 
 asm(	".pushsection .rodata			\n"
 	"fineibt_caller_start:			\n"
@@ -1094,13 +1115,16 @@ extern u8 fineibt_caller_end[];
 
 #define fineibt_caller_jmp (fineibt_caller_size - 2)
 
-static u32 decode_preamble_hash(void *addr)
+static u32 decode_preamble_hash(void *addr, int *reg)
 {
 	u8 *p = addr;
 
-	/* b8 78 56 34 12          mov    $0x12345678,%eax */
-	if (p[0] == 0xb8)
+	/* b8+reg 78 56 34 12      movl    $0x12345678,\reg */
+	if (p[0] >= 0xb8 && p[0] < 0xc0) {
+		if (reg)
+			*reg = p[0] - 0xb8;
 		return *(u32 *)(addr + 1);
+	}
 
 	return 0; /* invalid hash value */
 }
@@ -1109,7 +1133,7 @@ static u32 decode_caller_hash(void *addr)
 {
 	u8 *p = addr;
 
-	/* 41 ba 78 56 34 12       mov    $0x12345678,%r10d */
+	/* 41 ba 78 56 34 12       movl    $(-0x12345678),%r10d */
 	if (p[0] == 0x41 && p[1] == 0xba)
 		return -*(u32 *)(addr + 2);
 
@@ -1178,7 +1202,7 @@ static int cfi_rand_preamble(s32 *start, s32 *end)
 		void *addr = (void *)s + *s;
 		u32 hash;
 
-		hash = decode_preamble_hash(addr);
+		hash = decode_preamble_hash(addr, NULL);
 		if (WARN(!hash, "no CFI hash found at: %pS %px %*ph\n",
 			 addr, addr, 5, addr))
 			return -EINVAL;
@@ -1197,6 +1221,7 @@ static int cfi_rewrite_preamble(s32 *start, s32 *end)
 	for (s = start; s < end; s++) {
 		void *addr = (void *)s + *s;
 		u32 hash;
+		int reg;
 
 		/*
 		 * When the function doesn't start with ENDBR the compiler will
@@ -1206,7 +1231,7 @@ static int cfi_rewrite_preamble(s32 *start, s32 *end)
 		if (!is_endbr(addr + 16))
 			continue;
 
-		hash = decode_preamble_hash(addr);
+		hash = decode_preamble_hash(addr, &reg);
 		if (WARN(!hash, "no CFI hash found at: %pS %px %*ph\n",
 			 addr, addr, 5, addr))
 			return -EINVAL;
@@ -1214,6 +1239,19 @@ static int cfi_rewrite_preamble(s32 *start, s32 *end)
 		text_poke_early(addr, fineibt_preamble_start, fineibt_preamble_size);
 		WARN_ON(*(u32 *)(addr + fineibt_preamble_hash) != 0x12345678);
 		text_poke_early(addr + fineibt_preamble_hash, &hash, 4);
+
+		WARN_ONCE(!IS_ENABLED(CONFIG_FINEIBT_BHI) && reg,
+			  "kCFI preamble has wrong register at: %pS %px %*ph\n",
+			  addr, addr, 5, addr);
+
+		if (cfi_mode != CFI_FINEIBT_BHI || !reg)
+			continue;
+
+		text_poke_early(addr + fineibt_preamble_bhi,
+				text_gen_insn(CALL_INSN_OPCODE,
+					      addr + fineibt_preamble_bhi,
+					      __bhi_args[reg]),
+				CALL_INSN_SIZE);
 	}
 
 	return 0;
@@ -1330,6 +1368,7 @@ static void __apply_fineibt(s32 *start_retpoline, s32 *end_retpoline,
 		return;
 
 	case CFI_FINEIBT:
+	case CFI_FINEIBT_BHI:
 		/* place the FineIBT preamble at func()-16 */
 		ret = cfi_rewrite_preamble(start_cfi, end_cfi);
 		if (ret)
@@ -1343,8 +1382,10 @@ static void __apply_fineibt(s32 *start_retpoline, s32 *end_retpoline,
 		/* now that nobody targets func()+0, remove ENDBR there */
 		cfi_rewrite_endbr(start_cfi, end_cfi);
 
-		if (builtin)
-			pr_info("Using FineIBT CFI\n");
+		if (builtin) {
+			pr_info("Using FineIBT%s CFI\n",
+				cfi_mode == CFI_FINEIBT_BHI ? "+BHI" : "");
+		}
 		return;
 
 	default:
@@ -1372,6 +1413,7 @@ static void poison_cfi(void *addr)
 	 */
 	switch (cfi_mode) {
 	case CFI_FINEIBT:
+	case CFI_FINEIBT_BHI:
 		/*
 		 * FineIBT prefix should start with an ENDBR.
 		 */
@@ -1394,7 +1436,7 @@ static void poison_cfi(void *addr)
 		/*
 		 * kCFI prefix should start with a valid hash.
 		 */
-		if (!decode_preamble_hash(addr))
+		if (!decode_preamble_hash(addr, NULL))
 			break;
 
 		/*

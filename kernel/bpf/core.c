@@ -707,7 +707,7 @@ void bpf_prog_kallsyms_add(struct bpf_prog *fp)
 	 * When FineIBT, code in the __cfi_foo() symbols can get executed
 	 * and hence unwinder needs help.
 	 */
-	if (cfi_mode != CFI_FINEIBT)
+	if (cfi_mode != CFI_FINEIBT && cfi_mode != CFI_FINEIBT_BHI)
 		return;
 
 	snprintf(fp->aux->ksym_prefix.name, KSYM_NAME_LEN,
@@ -727,7 +727,7 @@ void bpf_prog_kallsyms_del(struct bpf_prog *fp)
 
 	bpf_ksym_del(&fp->aux->ksym);
 #ifdef CONFIG_FINEIBT
-	if (cfi_mode != CFI_FINEIBT)
+	if (cfi_mode != CFI_FINEIBT && cfi_mode != CFI_FINEIBT_BHI)
 		return;
 	bpf_ksym_del(&fp->aux->ksym_prefix);
 #endif
