@@ -101,6 +101,9 @@ enum cfi_mode {
 
 extern enum cfi_mode cfi_mode;
 
+typedef u8 bhi_thunk[32];
+extern bhi_thunk __bhi_args[];
+
 struct pt_regs;
 
 #ifdef CONFIG_CFI_CLANG
