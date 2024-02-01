@@ -198,6 +198,7 @@ impl Queue {
         // will have returned true. In this case, `__enqueue` promises that the raw pointer will
         // stay valid until we call the function pointer in the `work_struct`, so the access is ok.
         unsafe {
+            test break
             w.__enqueue(move |work_ptr| {
                 bindings::queue_work_on(
                     bindings::wq_misc_consts_WORK_CPU_UNBOUND as _,
