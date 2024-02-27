@@ -225,7 +225,8 @@ if [ "$bindgen_libclang_cversion" -lt "$bindgen_libclang_min_cversion" ]; then
 fi
 
 # If the C compiler is Clang, then we can also check whether its version
-# matches the `libclang` version used by the Rust bindings generator.
+# matches the `rustc`'s LLVM as well as the `libclang` version used by the Rust
+# bindings generator.
 #
 # In the future, we might be able to perform a full version check, see
 # https://github.com/rust-lang/rust-bindgen/issues/2138.
@@ -235,6 +236,18 @@ if [ "$cc_name" = Clang ]; then
 		LC_ALL=C $CC --version 2>/dev/null \
 			| sed -nE '1s:.*version ([0-9]+\.[0-9]+\.[0-9]+).*:\1:p'
 	)
+	rustc_llvm_version=$( \
+		LC_ALL=C "$RUSTC" --version --verbose 2>/dev/null \
+			| sed -nE 's:.*LLVM version\: ([0-9]+\.[0-9]+\.[0-9]+).*:\1:p'
+	)
+	if [ "$clang_version" != "$rustc_llvm_version" ]; then
+		echo >&2 "***"
+		echo >&2 "*** rustc's LLVM version does not match Clang's. This may be a problem."
+		echo >&2 "***   rustc's LLVM version: $rustc_llvm_version"
+		echo >&2 "***   Clang version:        $clang_version"
+		echo >&2 "***"
+		warning=1
+	fi
 	if [ "$clang_version" != "$bindgen_libclang_version" ]; then
 		echo >&2 "***"
 		echo >&2 "*** libclang (used by the Rust bindings generator '$BINDGEN')"
