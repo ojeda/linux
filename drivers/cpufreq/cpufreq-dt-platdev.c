@@ -232,7 +232,7 @@ static int __init cpufreq_dt_platdev_init(void)
 	return -ENODEV;
 
 create_pdev:
-	return PTR_ERR_OR_ZERO(platform_device_register_data(NULL, "cpufreq-dt",
+	return PTR_ERR_OR_ZERO(platform_device_register_data(NULL, "cpufreq_dt",
 			       -1, data,
 			       sizeof(struct cpufreq_dt_platform_data)));
 }
