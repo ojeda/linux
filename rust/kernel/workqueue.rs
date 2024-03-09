@@ -368,7 +368,7 @@ impl<T: ?Sized, const ID: u64> Work<T, ID> {
         // SAFETY: The `WorkItemPointer` implementation promises that `run` can be used as the work
         // item function.
         unsafe {
-            kernel::init::pin_init_from_closure(move |slot| {
+            init::pin_init_from_closure(move |slot| {
                 let slot = Self::raw_get(slot);
                 bindings::init_work_with_key(
                     slot,

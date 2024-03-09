@@ -2,7 +2,6 @@
 
 //! Kernel types.
 
-use crate::init::{self, PinInit};
 use alloc::boxed::Box;
 use core::{
     cell::UnsafeCell,
@@ -11,6 +10,7 @@ use core::{
     ops::{Deref, DerefMut},
     ptr::NonNull,
 };
+use init::PinInit;
 
 /// Used to transfer ownership to and from foreign (non-Rust) languages.
 ///

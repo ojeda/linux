@@ -3,7 +3,7 @@
 //! This module contains API-internal items for pin-init.
 //!
 //! These items must not be used outside of
-//! - `kernel/init.rs`
+//! - `init/lib.rs`
 //! - `macros/pin_data.rs`
 //! - `macros/pinned_drop.rs`
 
@@ -129,8 +129,6 @@ unsafe impl<T: ?Sized> HasInitData for T {
 /// # Invariants
 ///
 /// If `self.is_init` is true, then `self.value` is initialized.
-///
-/// [`stack_pin_init`]: kernel::stack_pin_init
 pub struct StackInit<T> {
     value: MaybeUninit<T>,
     is_init: bool,
@@ -150,8 +148,6 @@ impl<T> Drop for StackInit<T> {
 impl<T> StackInit<T> {
     /// Creates a new [`StackInit<T>`] that is uninitialized. Use [`stack_pin_init`] instead of this
     /// primitive.
-    ///
-    /// [`stack_pin_init`]: kernel::stack_pin_init
     #[inline]
     pub fn uninit() -> Self {
         Self {

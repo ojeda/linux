@@ -8,8 +8,6 @@
 use super::{lock::Backend, lock::Guard, LockClassKey};
 use crate::{
     bindings,
-    init::PinInit,
-    pin_init,
     str::CStr,
     task::{MAX_SCHEDULE_TIMEOUT, TASK_INTERRUPTIBLE, TASK_NORMAL, TASK_UNINTERRUPTIBLE},
     time::Jiffies,
@@ -18,6 +16,7 @@ use crate::{
 use core::ffi::{c_int, c_long};
 use core::marker::PhantomPinned;
 use core::ptr;
+use init::{pin_init, PinInit};
 use macros::pin_data;
 
 /// Creates a [`CondVar`] initialiser with the given name and a newly-created lock class.

@@ -516,7 +516,7 @@ macro_rules! __pinned_drop {
         unsafe $($impl_sig)* {
             // Inherit all attributes and the type/ident tokens for the signature.
             $(#[$($attr)*])*
-            fn drop($($sig)*, _: $crate::init::__internal::OnlyCallFromDrop) {
+            fn drop($($sig)*, _: $crate::__internal::OnlyCallFromDrop) {
                 $($inner)*
             }
         }
@@ -845,7 +845,7 @@ macro_rules! __pin_data {
             // SAFETY: We have added the correct projection functions above to `__ThePinData` and
             // we also use the least restrictive generics possible.
             unsafe impl<$($impl_generics)*>
-                $crate::init::__internal::HasPinData for $name<$($ty_generics)*>
+                $crate::__internal::HasPinData for $name<$($ty_generics)*>
             where $($whr)*
             {
                 type PinData = __ThePinData<$($ty_generics)*>;
@@ -856,7 +856,7 @@ macro_rules! __pin_data {
             }
 
             unsafe impl<$($impl_generics)*>
-                $crate::init::__internal::PinData for __ThePinData<$($ty_generics)*>
+                $crate::__internal::PinData for __ThePinData<$($ty_generics)*>
             where $($whr)*
             {
                 type Datee = $name<$($ty_generics)*>;
@@ -915,7 +915,7 @@ macro_rules! __pin_data {
         // `PinnedDrop` as the parameter to `#[pin_data]`.
         #[allow(non_camel_case_types)]
         trait UselessPinnedDropImpl_you_need_to_specify_PinnedDrop {}
-        impl<T: $crate::init::PinnedDrop>
+        impl<T: $crate::PinnedDrop>
             UselessPinnedDropImpl_you_need_to_specify_PinnedDrop for T {}
         impl<$($impl_generics)*>
             UselessPinnedDropImpl_you_need_to_specify_PinnedDrop for $name<$($ty_generics)*>
@@ -938,8 +938,8 @@ macro_rules! __pin_data {
                 let pinned = unsafe { ::core::pin::Pin::new_unchecked(self) };
                 // SAFETY: Since this is a drop function, we can create this token to call the
                 // pinned destructor of this type.
-                let token = unsafe { $crate::init::__internal::OnlyCallFromDrop::new() };
-                $crate::init::PinnedDrop::drop(pinned, token);
+                let token = unsafe { $crate::__internal::OnlyCallFromDrop::new() };
+                $crate::PinnedDrop::drop(pinned, token);
             }
         }
     };
@@ -978,9 +978,9 @@ macro_rules! __pin_data {
                 $pvis unsafe fn $p_field<E>(
                     self,
                     slot: *mut $p_type,
-                    init: impl $crate::init::PinInit<$p_type, E>,
+                    init: impl $crate::PinInit<$p_type, E>,
                 ) -> ::core::result::Result<(), E> {
-                    unsafe { $crate::init::PinInit::__pinned_init(init, slot) }
+                    unsafe { $crate::PinInit::__pinned_init(init, slot) }
                 }
             )*
             $(
@@ -988,9 +988,9 @@ macro_rules! __pin_data {
                 $fvis unsafe fn $field<E>(
                     self,
                     slot: *mut $type,
-                    init: impl $crate::init::Init<$type, E>,
+                    init: impl $crate::Init<$type, E>,
                 ) -> ::core::result::Result<(), E> {
-                    unsafe { $crate::init::Init::__init(init, slot) }
+                    unsafe { $crate::Init::__init(init, slot) }
                 }
             )*
         }
@@ -1105,7 +1105,7 @@ macro_rules! __init_internal {
         struct __InitOk;
         // Get the data about fields from the supplied type.
         let data = unsafe {
-            use $crate::init::__internal::$has_data;
+            use $crate::__internal::$has_data;
             // Here we abuse `paste!` to retokenize `$t`. Declarative macros have some internal
             // information that is associated to already parsed fragments, so a path fragment
             // cannot be used in this position. Doing the retokenization results in valid rust
@@ -1113,7 +1113,7 @@ macro_rules! __init_internal {
             ::kernel::macros::paste!($t::$get_data())
         };
         // Ensure that `data` really is of type `$data` and help with type inference:
-        let init = $crate::init::__internal::$data::make_closure::<_, __InitOk, $err>(
+        let init = $crate::__internal::$data::make_closure::<_, __InitOk, $err>(
             data,
             move |slot| {
                 {
@@ -1123,7 +1123,7 @@ macro_rules! __init_internal {
                     // error when fields are missing (since they will be zeroed). We also have to
                     // check that the type actually implements `Zeroable`.
                     $({
-                        fn assert_zeroable<T: $crate::init::Zeroable>(_: *mut T) {}
+                        fn assert_zeroable<T: $crate::Zeroable>(_: *mut T) {}
                         // Ensure that the struct is indeed `Zeroable`.
                         assert_zeroable(slot);
                         // SAFETY: The type implements `Zeroable` by the check above.
@@ -1159,7 +1159,7 @@ macro_rules! __init_internal {
         let init = move |slot| -> ::core::result::Result<(), $err> {
             init(slot).map(|__InitOk| ())
         };
-        let init = unsafe { $crate::init::$construct_closure::<_, $err>(init) };
+        let init = unsafe { $crate::$construct_closure::<_, $err>(init) };
         init
     }};
     (init_slot($($use_data:ident)?):
@@ -1193,7 +1193,7 @@ macro_rules! __init_internal {
         ::kernel::macros::paste! {
             // SAFETY: We forget the guard later when initialization has succeeded.
             let [<$field>] = unsafe {
-                $crate::init::__internal::DropGuard::new(::core::ptr::addr_of_mut!((*$slot).$field))
+                $crate::__internal::DropGuard::new(::core::ptr::addr_of_mut!((*$slot).$field))
             };
 
             $crate::__init_internal!(init_slot($use_data):
@@ -1216,7 +1216,7 @@ macro_rules! __init_internal {
         //
         // SAFETY: `slot` is valid, because we are inside of an initializer closure, we
         // return when an error/panic occurs.
-        unsafe { $crate::init::Init::__init(init, ::core::ptr::addr_of_mut!((*$slot).$field))? };
+        unsafe { $crate::Init::__init(init, ::core::ptr::addr_of_mut!((*$slot).$field))? };
         // Create the drop guard:
         //
         // We rely on macro hygiene to make it impossible for users to access this local variable.
@@ -1224,7 +1224,7 @@ macro_rules! __init_internal {
         ::kernel::macros::paste! {
             // SAFETY: We forget the guard later when initialization has succeeded.
             let [<$field>] = unsafe {
-                $crate::init::__internal::DropGuard::new(::core::ptr::addr_of_mut!((*$slot).$field))
+                $crate::__internal::DropGuard::new(::core::ptr::addr_of_mut!((*$slot).$field))
             };
 
             $crate::__init_internal!(init_slot():
@@ -1256,7 +1256,7 @@ macro_rules! __init_internal {
         ::kernel::macros::paste! {
             // SAFETY: We forget the guard later when initialization has succeeded.
             let [<$field>] = unsafe {
-                $crate::init::__internal::DropGuard::new(::core::ptr::addr_of_mut!((*$slot).$field))
+                $crate::__internal::DropGuard::new(::core::ptr::addr_of_mut!((*$slot).$field))
             };
 
             $crate::__init_internal!(init_slot($($use_data)?):
@@ -1367,12 +1367,12 @@ macro_rules! __derive_zeroable {
     ) => {
         // SAFETY: Every field type implements `Zeroable` and padding bytes may be zero.
         #[automatically_derived]
-        unsafe impl<$($impl_generics)*> $crate::init::Zeroable for $name<$($ty_generics)*>
+        unsafe impl<$($impl_generics)*> $crate::Zeroable for $name<$($ty_generics)*>
         where
             $($($whr)*)?
         {}
         const _: () = {
-            fn assert_zeroable<T: ?::core::marker::Sized + $crate::init::Zeroable>() {}
+            fn assert_zeroable<T: ?::core::marker::Sized + $crate::Zeroable>() {}
             fn ensure_zeroable<$($impl_generics)*>()
                 where $($($whr)*)?
             {
