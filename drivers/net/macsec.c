@@ -607,11 +607,26 @@ static struct sk_buff *macsec_encrypt(struct sk_buff *skb,
 		return ERR_PTR(-EINVAL);
 	}
 
-	ret = skb_ensure_writable_head_tail(skb, dev);
-	if (unlikely(ret < 0)) {
-		macsec_txsa_put(tx_sa);
-		kfree_skb(skb);
-		return ERR_PTR(ret);
+	if (unlikely(skb_headroom(skb) < MACSEC_NEEDED_HEADROOM ||
+		     skb_tailroom(skb) < MACSEC_NEEDED_TAILROOM)) {
+		struct sk_buff *nskb = skb_copy_expand(skb,
+						       MACSEC_NEEDED_HEADROOM,
+						       MACSEC_NEEDED_TAILROOM,
+						       GFP_ATOMIC);
+		if (likely(nskb)) {
+			consume_skb(skb);
+			skb = nskb;
+		} else {
+			macsec_txsa_put(tx_sa);
+			kfree_skb(skb);
+			return ERR_PTR(-ENOMEM);
+		}
+	} else {
+		skb = skb_unshare(skb, GFP_ATOMIC);
+		if (!skb) {
+			macsec_txsa_put(tx_sa);
+			return ERR_PTR(-ENOMEM);
+		}
 	}
 
 	unprotected_len = skb->len;
@@ -3738,7 +3753,7 @@ static void macsec_get_stats64(struct net_device *dev,
 
 static int macsec_get_iflink(const struct net_device *dev)
 {
-	return macsec_priv(dev)->real_dev->ifindex;
+	return READ_ONCE(macsec_priv(dev)->real_dev->ifindex);
 }
 
 static const struct net_device_ops macsec_netdev_ops = {
