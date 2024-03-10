@@ -423,6 +423,12 @@ redirect-intrinsics = \
 	__muloti4 __multi3 \
 	__udivmodti4 __udivti3 __umodti3
 
+ifneq ($(and $(CONFIG_RISCV),$(CONFIG_32BIT)),)
+	# These intrinsics are defined for RISCV32
+	redirect-intrinsics += \
+		__udivdi3 __umoddi3
+endif
+
 ifneq ($(or $(CONFIG_ARM64),$(and $(CONFIG_RISCV),$(CONFIG_64BIT))),)
 	# These intrinsics are defined for ARM64 and RISCV64
 	redirect-intrinsics += \

@@ -175,7 +175,10 @@ fn main() {
             ts.push("llvm-target", "riscv64-linux-gnu");
             ts.push("target-pointer-width", "64");
         } else {
-            panic!("32-bit RISC-V is an unsupported architecture");
+            ts.push("arch", "riscv32");
+            ts.push("data-layout", "e-m:e-p:32:32-i64:64-n32-S128");
+            ts.push("llvm-target", "riscv32-linux-gnu");
+            ts.push("target-pointer-width", "32");
         }
         ts.push("code-model", "medium");
         ts.push("disable-redzone", true);

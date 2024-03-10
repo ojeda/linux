@@ -70,5 +70,12 @@ define_panicking_intrinsics!("`u128` should not be used", {
     __umodti3,
 });
 
+// FIXME: we should probably support it.
+#[cfg(target_arch = "riscv32")]
+define_panicking_intrinsics!("`u64` division/modulo should not be used", {
+    __udivdi3,
+    __umoddi3,
+});
+
 // NOTE: if you are adding a new intrinsic here, you should also add it to
 // `redirect-intrinsics` in `rust/Makefile`.
