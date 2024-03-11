@@ -98,8 +98,8 @@
  * Optional: only supported since gcc >= 15
  * Optional: only supported since clang >= 18
  *
- *   gcc: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=108896
- * clang: https://github.com/llvm/llvm-project/pull/76348
+ *   gcc: https://gcc.gnu.org/onlinedocs/gcc/Common-Variable-Attributes.html#index-counted_005fby-variable-attribute
+ * clang: https://clang.llvm.org/docs/AttributeReference.html#counted-by
  */
 #if __has_attribute(__counted_by__)
 # define __counted_by(member)		__attribute__((__counted_by__(member)))
