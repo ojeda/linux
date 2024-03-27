@@ -414,6 +414,7 @@ EXPORT_SYMBOL_GPL(dev_pm_opp_get_max_volt_latency);
  */
 unsigned long dev_pm_opp_get_max_transition_latency(struct device *dev)
 {
+	pr_info("%s: %d\n", __func__, __LINE__);
 	return dev_pm_opp_get_max_volt_latency(dev) +
 		dev_pm_opp_get_max_clock_latency(dev);
 }
@@ -440,6 +441,7 @@ unsigned long dev_pm_opp_get_suspend_opp_freq(struct device *dev)
 
 	dev_pm_opp_put_opp_table(opp_table);
 
+	pr_info("%s: %d: %lu\n", __func__, __LINE__, freq);
 	return freq;
 }
 EXPORT_SYMBOL_GPL(dev_pm_opp_get_suspend_opp_freq);
@@ -1006,6 +1008,7 @@ _opp_config_clk_single(struct device *dev, struct opp_table *opp_table,
 		return -EINVAL;
 	}
 
+	pr_info("%s: %d: %lu\n", __func__, __LINE__, freq);
 	ret = clk_set_rate(opp_table->clk, freq);
 	if (ret) {
 		dev_err(dev, "%s: failed to set clock rate: %d\n", __func__,
@@ -2221,9 +2224,12 @@ static int _opp_set_regulators(struct opp_table *opp_table, struct device *dev,
 	int count = 0, ret, i;
 
 	/* Count number of regulators */
+	pr_info("%s: %d: %s\n", __func__, __LINE__, names[0]);
 	while (*temp++)
 		count++;
 
+	pr_info("%s: %d: %d\n", __func__, __LINE__, count);
+	pr_info("%s: %d: %s\n", __func__, __LINE__, names[0]);
 	if (!count)
 		return -EINVAL;
 
@@ -2231,12 +2237,14 @@ static int _opp_set_regulators(struct opp_table *opp_table, struct device *dev,
 	if (opp_table->regulators)
 		return 0;
 
+	pr_info("%s: %d\n", __func__, __LINE__);
 	opp_table->regulators = kmalloc_array(count,
 					      sizeof(*opp_table->regulators),
 					      GFP_KERNEL);
 	if (!opp_table->regulators)
 		return -ENOMEM;
 
+	pr_info("%s: %d\n", __func__, __LINE__);
 	for (i = 0; i < count; i++) {
 		reg = regulator_get_optional(dev, names[i]);
 		if (IS_ERR(reg)) {
@@ -2249,12 +2257,14 @@ static int _opp_set_regulators(struct opp_table *opp_table, struct device *dev,
 		opp_table->regulators[i] = reg;
 	}
 
+	pr_info("%s: %d\n", __func__, __LINE__);
 	opp_table->regulator_count = count;
 
 	/* Set generic config_regulators() for single regulators here */
 	if (count == 1)
 		opp_table->config_regulators = _opp_config_regulator_single;
 
+	pr_info("%s: %d\n", __func__, __LINE__);
 	return 0;
 
 free_regulators:
@@ -2272,6 +2282,7 @@ static void _opp_put_regulators(struct opp_table *opp_table)
 {
 	int i;
 
+	pr_info("%s: %d\n", __func__, __LINE__);
 	if (!opp_table->regulators)
 		return;
 
@@ -2521,6 +2532,7 @@ int dev_pm_opp_set_config(struct device *dev, struct dev_pm_opp_config *config)
 	unsigned int id;
 	int ret;
 
+	pr_info("%s: %d\n", __func__, __LINE__);
 	data = kmalloc(sizeof(*data), GFP_KERNEL);
 	if (!data)
 		return -ENOMEM;
@@ -2534,14 +2546,17 @@ int dev_pm_opp_set_config(struct device *dev, struct dev_pm_opp_config *config)
 	data->opp_table = opp_table;
 	data->flags = 0;
 
+	pr_info("%s: %d\n", __func__, __LINE__);
 	/* This should be called before OPPs are initialized */
 	if (WARN_ON(!list_empty(&opp_table->opp_list))) {
 		ret = -EBUSY;
 		goto err;
 	}
 
+	pr_info("%s: %d\n", __func__, __LINE__);
 	/* Configure clocks */
 	if (config->clk_names) {
+	pr_info("%s: %d\n", __func__, __LINE__);
 		ret = _opp_set_clknames(opp_table, dev, config->clk_names,
 					config->config_clks);
 		if (ret)
@@ -2549,6 +2564,7 @@ int dev_pm_opp_set_config(struct device *dev, struct dev_pm_opp_config *config)
 
 		data->flags |= OPP_CONFIG_CLK;
 	} else if (config->config_clks) {
+	pr_info("%s: %d\n", __func__, __LINE__);
 		/* Don't allow config callback without clocks */
 		ret = -EINVAL;
 		goto err;
@@ -2556,6 +2572,7 @@ int dev_pm_opp_set_config(struct device *dev, struct dev_pm_opp_config *config)
 
 	/* Configure property names */
 	if (config->prop_name) {
+	pr_info("%s: %d\n", __func__, __LINE__);
 		ret = _opp_set_prop_name(opp_table, config->prop_name);
 		if (ret)
 			goto err;
@@ -2565,6 +2582,7 @@ int dev_pm_opp_set_config(struct device *dev, struct dev_pm_opp_config *config)
 
 	/* Configure config_regulators helper */
 	if (config->config_regulators) {
+	pr_info("%s: %d\n", __func__, __LINE__);
 		ret = _opp_set_config_regulators_helper(opp_table, dev,
 						config->config_regulators);
 		if (ret)
@@ -2575,6 +2593,7 @@ int dev_pm_opp_set_config(struct device *dev, struct dev_pm_opp_config *config)
 
 	/* Configure supported hardware */
 	if (config->supported_hw) {
+	pr_info("%s: %d\n", __func__, __LINE__);
 		ret = _opp_set_supported_hw(opp_table, config->supported_hw,
 					    config->supported_hw_count);
 		if (ret)
@@ -2585,6 +2604,7 @@ int dev_pm_opp_set_config(struct device *dev, struct dev_pm_opp_config *config)
 
 	/* Configure supplies */
 	if (config->regulator_names) {
+	pr_info("%s: %d\n", __func__, __LINE__);
 		ret = _opp_set_regulators(opp_table, dev,
 					  config->regulator_names);
 		if (ret)
@@ -2593,7 +2613,9 @@ int dev_pm_opp_set_config(struct device *dev, struct dev_pm_opp_config *config)
 		data->flags |= OPP_CONFIG_REGULATOR;
 	}
 
+	pr_info("%s: %d\n", __func__, __LINE__);
 	if (config->required_dev) {
+		pr_info("%s: %d\n", __func__, __LINE__);
 		ret = _opp_set_required_dev(opp_table, dev,
 					    config->required_dev,
 					    config->required_dev_index);
@@ -2604,11 +2626,13 @@ int dev_pm_opp_set_config(struct device *dev, struct dev_pm_opp_config *config)
 		data->flags |= OPP_CONFIG_REQUIRED_DEV;
 	}
 
+	pr_info("%s: %d\n", __func__, __LINE__);
 	ret = xa_alloc(&opp_configs, &id, data, XA_LIMIT(1, INT_MAX),
 		       GFP_KERNEL);
 	if (ret)
 		goto err;
 
+	pr_info("%s: %d\n", __func__, __LINE__);
 	return id;
 
 err:
@@ -2634,6 +2658,7 @@ void dev_pm_opp_clear_config(int token)
 {
 	struct opp_config_data *data;
 
+	pr_info("%s: %d\n", __func__, __LINE__);
 	/*
 	 * This lets the callers call this unconditionally and keep their code
 	 * simple.

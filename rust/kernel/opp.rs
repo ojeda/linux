@@ -752,6 +752,7 @@ impl Drop for Table {
         // to relinquish it now.
         unsafe { bindings::dev_pm_opp_put_opp_table(self.ptr) };
 
+        pr_info!("Dropping OPP table\n");
         #[cfg(CONFIG_OF)]
         {
             #[cfg(CONFIG_ENERGY_MODEL)]

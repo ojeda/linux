@@ -1414,6 +1414,9 @@ static int cpufreq_online(unsigned int cpu)
 		if (cpufreq_boost_enabled() && policy_has_boost_freq(policy))
 			policy->boost_enabled = true;
 
+		pr_info(" cpus: %*pbl\n clk: %p\n sf: %u\n ft: %p\n ftd: %u %u %u\n td: %u\n dvfs: %d\n boost: %d\n dd: %p\n",
+			cpumask_pr_args(policy->cpus), policy->clk, policy->suspend_freq, policy->freq_table, policy->freq_table->flags, policy->freq_table->driver_data, policy->freq_table->frequency, policy->transition_delay_us, policy->dvfs_possible_from_any_cpu, policy->boost_enabled, policy->driver_data);
+
 		/*
 		 * The initialization has succeeded and the policy is online.
 		 * If there is a problem with its frequency table, take it

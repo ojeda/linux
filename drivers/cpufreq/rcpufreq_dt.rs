@@ -61,6 +61,7 @@ impl cpufreq::Driver for CPUFreqDTDriver {
     type PData = Arc<CPUFreqDTDevice>;
 
     fn init(policy: &mut cpufreq::Policy) -> Result<Self::PData> {
+        pr_info!("init\n");
         let cpu = policy.cpu();
         // SAFETY: The CPU device is only used from the init() callback during which the CPU can't
         // get hot-unplugged. Also the cpufreq core in C library, registers with CPU notifiers and
@@ -151,17 +152,20 @@ impl cpufreq::Driver for CPUFreqDTDriver {
     }
 
     fn exit(_policy: &mut cpufreq::Policy, _data: Option<Self::PData>) -> Result<()> {
+        pr_info!("exit\n");
         Ok(())
     }
 
     fn online(_policy: &mut cpufreq::Policy) -> Result<()> {
         // We did light-weight tear down earlier, nothing to do here.
+        pr_info!("online\n");
         Ok(())
     }
 
     fn offline(_policy: &mut cpufreq::Policy) -> Result<()> {
         // Preserve policy->data and don't free resources on light-weight
         // tear down.
+        pr_info!("offline\n");
         Ok(())
     }
 
@@ -174,6 +178,7 @@ impl cpufreq::Driver for CPUFreqDTDriver {
     }
 
     fn target_index(policy: &mut cpufreq::Policy, index: u32) -> Result<()> {
+        pr_info!("target_index\n");
         let data = match policy.data::<Self::PData>() {
             Some(data) => data,
             None => return Err(ENOENT),
@@ -184,10 +189,12 @@ impl cpufreq::Driver for CPUFreqDTDriver {
     }
 
     fn get(policy: &mut cpufreq::Policy) -> Result<u32> {
+        pr_info!("get\n");
         policy.generic_get()
     }
 
     fn set_boost(_policy: &mut cpufreq::Policy, _state: i32) -> Result<()> {
+        pr_info!("set_boost\n");
         Ok(())
     }
 
