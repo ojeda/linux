@@ -15,6 +15,13 @@ mod zeroable;
 
 use proc_macro::TokenStream;
 
+mod testsyn;
+/// Test `syn`.
+#[proc_macro_derive(HeapSize)]
+pub fn derive_heap_size(input: TokenStream) -> TokenStream {
+    testsyn::derive_heap_size(input)
+}
+
 /// Declares a kernel module.
 ///
 /// The `type` argument should be a type which implements the [`Module`]

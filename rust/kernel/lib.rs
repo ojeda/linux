@@ -139,3 +139,80 @@ macro_rules! container_of {
         ptr.sub(offset) as *const $type
     }}
 }
+
+mod heapsize {
+
+    pub(crate) trait HeapSize {
+        /// Total number of bytes of heap memory owned by `self`.
+        ///
+        /// Does not include the size of `self` itself, which may or may not be on
+        /// the heap. Includes only children of `self`, meaning things pointed to by
+        /// `self`.
+        fn heap_size_of_children(&self) -> usize;
+    }
+
+    //
+    // In a real version of this library there would be lots more impls here, but
+    // here are some interesting ones.
+    //
+
+    impl HeapSize for u8 {
+        /// A `u8` does not own any heap memory.
+        fn heap_size_of_children(&self) -> usize {
+            0
+        }
+    }
+
+    impl<T> HeapSize for alloc::boxed::Box<T>
+    where
+        T: ?Sized + HeapSize,
+    {
+        /// A `Box` owns however much heap memory was allocated to hold the value of
+        /// type `T` that we placed on the heap, plus transitively however much `T`
+        /// itself owns.
+        fn heap_size_of_children(&self) -> usize {
+            core::mem::size_of_val(&**self) + (**self).heap_size_of_children()
+        }
+    }
+
+    impl<T> HeapSize for [T]
+    where
+        T: HeapSize,
+    {
+        /// Sum of heap memory owned by each element of a dynamically sized slice of
+        /// `T`.
+        fn heap_size_of_children(&self) -> usize {
+            self.iter().map(HeapSize::heap_size_of_children).sum()
+        }
+    }
+
+    impl<'a, T> HeapSize for &'a T
+    where
+        T: ?Sized,
+    {
+        /// A shared reference does not own heap memory.
+        fn heap_size_of_children(&self) -> usize {
+            0
+        }
+    }
+}
+
+use macros::HeapSize;
+
+#[derive(HeapSize)]
+#[allow(clippy::redundant_allocation)]
+struct Test {
+    a: u8,
+    b: alloc::boxed::Box<alloc::boxed::Box<u8>>,
+}
+
+/// Test `syn`.
+pub fn testsyn() {
+    use crate::heapsize::HeapSize;
+    let b = alloc::boxed::Box::try_new(42).unwrap();
+    let test = Test {
+        a: 42,
+        b: alloc::boxed::Box::try_new(b).unwrap(),
+    };
+    pr_info!("{}\n", test.heap_size_of_children());
+}
