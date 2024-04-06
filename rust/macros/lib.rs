@@ -8,6 +8,7 @@ mod module;
 mod paste;
 mod pin_data;
 mod pinned_drop;
+mod primitive_init;
 mod vtable;
 mod zeroable;
 
@@ -452,4 +453,13 @@ pub fn derive_zeroable(input: TokenStream) -> TokenStream {
         Err(err) => err.into_compile_error(),
     }
     .into()
+}
+
+/// Universal in-place initialization macro.
+///
+/// Please use `[try_][pin_]init!` instead. This macro implements their behavior in a general way.
+#[proc_macro]
+pub fn primitive_init(input: TokenStream) -> TokenStream {
+    let input = parse_macro_input!(input as primitive_init::InPlaceInitializer);
+    primitive_init::primitive_init(input).into()
 }
