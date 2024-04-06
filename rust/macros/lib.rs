@@ -3,7 +3,6 @@
 //! Crate for all kernel procedural macros.
 
 mod concat_idents;
-mod helpers;
 mod module;
 mod paste;
 mod pin_data;
