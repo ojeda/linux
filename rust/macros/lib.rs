@@ -2,8 +2,6 @@
 
 //! Crate for all kernel procedural macros.
 
-#[macro_use]
-mod quote;
 mod concat_idents;
 mod helpers;
 mod module;
@@ -76,7 +74,7 @@ use proc_macro::TokenStream;
 ///   - `alias`: byte array of alias name of the kernel module.
 #[proc_macro]
 pub fn module(ts: TokenStream) -> TokenStream {
-    module::module(ts)
+    module::module(ts.into()).into()
 }
 
 /// Declares or implements a vtable trait.
@@ -151,7 +149,7 @@ pub fn module(ts: TokenStream) -> TokenStream {
 /// [`kernel::error::VTABLE_DEFAULT_ERROR`]: ../kernel/error/constant.VTABLE_DEFAULT_ERROR.html
 #[proc_macro_attribute]
 pub fn vtable(attr: TokenStream, ts: TokenStream) -> TokenStream {
-    vtable::vtable(attr, ts)
+    vtable::vtable(attr.into(), ts.into()).into()
 }
 
 /// Concatenate two identifiers.
@@ -194,7 +192,7 @@ pub fn vtable(attr: TokenStream, ts: TokenStream) -> TokenStream {
 /// ```
 #[proc_macro]
 pub fn concat_idents(ts: TokenStream) -> TokenStream {
-    concat_idents::concat_idents(ts)
+    concat_idents::concat_idents(ts.into()).into()
 }
 
 /// Used to specify the pinning information of the fields of a struct.
@@ -243,7 +241,7 @@ pub fn concat_idents(ts: TokenStream) -> TokenStream {
 //  ^ cannot use direct link, since `kernel` is not a dependency of `macros`.
 #[proc_macro_attribute]
 pub fn pin_data(inner: TokenStream, item: TokenStream) -> TokenStream {
-    pin_data::pin_data(inner, item)
+    pin_data::pin_data(inner.into(), item.into()).into()
 }
 
 /// Used to implement `PinnedDrop` safely.
@@ -270,7 +268,7 @@ pub fn pin_data(inner: TokenStream, item: TokenStream) -> TokenStream {
 /// ```
 #[proc_macro_attribute]
 pub fn pinned_drop(args: TokenStream, input: TokenStream) -> TokenStream {
-    pinned_drop::pinned_drop(args, input)
+    pinned_drop::pinned_drop(args.into(), input.into()).into()
 }
 
 /// Paste identifiers together.
@@ -382,9 +380,13 @@ pub fn pinned_drop(args: TokenStream, input: TokenStream) -> TokenStream {
 /// [`paste`]: https://docs.rs/paste/
 #[proc_macro]
 pub fn paste(input: TokenStream) -> TokenStream {
+    let input: proc_macro2::TokenStream = input.into();
     let mut tokens = input.into_iter().collect();
     paste::expand(&mut tokens);
-    tokens.into_iter().collect()
+    tokens
+        .into_iter()
+        .collect::<proc_macro2::TokenStream>()
+        .into()
 }
 
 /// Derives the [`Zeroable`] trait for the given struct.
@@ -403,5 +405,5 @@ pub fn paste(input: TokenStream) -> TokenStream {
 /// ```
 #[proc_macro_derive(Zeroable)]
 pub fn derive_zeroable(input: TokenStream) -> TokenStream {
-    zeroable::derive(input)
+    zeroable::derive(input.into()).into()
 }

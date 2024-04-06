@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-2.0
 
 use crate::helpers::*;
-use proc_macro::{token_stream, Delimiter, Literal, TokenStream, TokenTree};
+use proc_macro2::{token_stream, Delimiter, Literal, TokenStream, TokenTree};
 use std::fmt::Write;
 
 fn expect_string_array(it: &mut token_stream::IntoIter) -> Vec<String> {

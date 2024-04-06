@@ -1,7 +1,8 @@
 // SPDX-License-Identifier: GPL-2.0
 
 use crate::helpers::{parse_generics, Generics};
-use proc_macro::{TokenStream, TokenTree};
+use proc_macro2::{TokenStream, TokenTree};
+use quote::quote;
 
 pub(crate) fn derive(input: TokenStream) -> TokenStream {
     let (
