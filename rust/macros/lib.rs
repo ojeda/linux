@@ -12,6 +12,7 @@ mod vtable;
 mod zeroable;
 
 use proc_macro::TokenStream;
+use quote::quote;
 use syn::parse_macro_input;
 
 /// Declares a kernel module.
@@ -74,8 +75,20 @@ use syn::parse_macro_input;
 ///   - `license`: byte array of the license of the kernel module (required).
 ///   - `alias`: byte array of alias name of the kernel module.
 #[proc_macro]
-pub fn module(ts: TokenStream) -> TokenStream {
-    module::module(ts.into()).into()
+pub fn module(input: TokenStream) -> TokenStream {
+    match syn::parse(input) {
+        Ok(input) => module::module(input),
+        Err(err) => {
+            let err = err.into_compile_error();
+            quote! {
+                // Supresses missing `__LOG_PREFIX` errors from printing macros.
+                const __LOG_PREFIX: &[u8] = b"";
+                // Due to this error, it will not compile, so an empty `__LOG_PREFIX` is fine.
+                #err
+            }
+        }
+    }
+    .into()
 }
 
 /// Declares or implements a vtable trait.

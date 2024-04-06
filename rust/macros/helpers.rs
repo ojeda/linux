@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: GPL-2.0
 
+#![allow(dead_code)]
 use proc_macro2::{token_stream, Group, TokenStream, TokenTree};
 
 pub(crate) fn try_ident(it: &mut token_stream::IntoIter) -> Option<String> {
