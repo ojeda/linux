@@ -12,6 +12,7 @@ mod vtable;
 mod zeroable;
 
 use proc_macro::TokenStream;
+use syn::parse_macro_input;
 
 /// Declares a kernel module.
 ///
@@ -148,8 +149,15 @@ pub fn module(ts: TokenStream) -> TokenStream {
 ///
 /// [`kernel::error::VTABLE_DEFAULT_ERROR`]: ../kernel/error/constant.VTABLE_DEFAULT_ERROR.html
 #[proc_macro_attribute]
-pub fn vtable(attr: TokenStream, ts: TokenStream) -> TokenStream {
-    vtable::vtable(attr.into(), ts.into()).into()
+pub fn vtable(args: TokenStream, input: TokenStream) -> TokenStream {
+    parse_macro_input!(args as syn::parse::Nothing);
+    match syn::parse(input.clone()) {
+        Ok(input) => vtable::vtable(input)
+            .unwrap_or_else(|e| e.into_compile_error())
+            .into(),
+        // Item parsing falied, let the compiler handle the nice error output.
+        Err(_) => input,
+    }
 }
 
 /// Concatenate two identifiers.
