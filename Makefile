@@ -845,6 +845,9 @@ KBUILD_CFLAGS += $(stackp-flags-y)
 KBUILD_RUSTFLAGS-$(CONFIG_WERROR) += -Dwarnings
 KBUILD_RUSTFLAGS += $(KBUILD_RUSTFLAGS-y)
 
+KBUILD_HOSTRUSTFLAGS-$(CONFIG_WERROR) += -Dwarnings
+KBUILD_HOSTRUSTFLAGS += $(KBUILD_HOSTRUSTFLAGS-y)
+
 ifdef CONFIG_FRAME_POINTER
 KBUILD_CFLAGS	+= -fno-omit-frame-pointer -fno-optimize-sibling-calls
 KBUILD_RUSTFLAGS += -Cforce-frame-pointers=y
