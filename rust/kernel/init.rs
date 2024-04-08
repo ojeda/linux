@@ -228,8 +228,6 @@ use core::{
 
 #[doc(hidden)]
 pub mod __internal;
-#[doc(hidden)]
-pub mod macros;
 
 /// Initialize and pin a type directly on the stack.
 ///
