@@ -1478,7 +1478,8 @@ endif # CONFIG_MODULES
 CLEAN_FILES += vmlinux.symvers modules-only.symvers \
 	       modules.builtin modules.builtin.modinfo modules.nsdeps \
 	       compile_commands.json .thinlto-cache rust/test \
-	       rust-project.json .vmlinux.objs .vmlinux.export.c
+	       rust/helpers/helpers_combined.c rust-project.json \
+	       .vmlinux.objs .vmlinux.export.c
 
 # Directories & files removed with 'make mrproper'
 MRPROPER_FILES += include/config include/generated          \
