@@ -256,7 +256,7 @@
 #endif
 
 /*
- * Optional: only supported since GCC >= 7.1, clang >= 13.0.
+ * Optional: only supported since GCC >= 7.1
  *
  *      gcc: https://gcc.gnu.org/onlinedocs/gcc/Common-Function-Attributes.html#index-no_005fprofile_005finstrument_005ffunction-function-attribute
  *    clang: https://clang.llvm.org/docs/AttributeReference.html#no-profile-instrument-function
@@ -275,7 +275,7 @@
 #define __noreturn                      __attribute__((__noreturn__))
 
 /*
- * Optional: only supported since GCC >= 11.1, clang >= 7.0.
+ * Optional: only supported since GCC >= 11.1
  *
  *   gcc: https://gcc.gnu.org/onlinedocs/gcc/Common-Function-Attributes.html#index-no_005fstack_005fprotector-function-attribute
  *   clang: https://clang.llvm.org/docs/AttributeReference.html#no-stack-protector-safebuffers
