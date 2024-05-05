@@ -22,6 +22,7 @@
 
 /*
  *   gcc: https://gcc.gnu.org/onlinedocs/gcc/Common-Function-Attributes.html#index-alias-function-attribute
+ * clang: https://clang.llvm.org/docs/AttributeReference.html#alias
  */
 #define __alias(symbol)                 __attribute__((__alias__(#symbol)))
 
@@ -29,6 +30,7 @@
  *   gcc: https://gcc.gnu.org/onlinedocs/gcc/Common-Function-Attributes.html#index-aligned-function-attribute
  *   gcc: https://gcc.gnu.org/onlinedocs/gcc/Common-Type-Attributes.html#index-aligned-type-attribute
  *   gcc: https://gcc.gnu.org/onlinedocs/gcc/Common-Variable-Attributes.html#index-aligned-variable-attribute
+ * clang: https://clang.llvm.org/docs/AttributeReference.html#alignas-align-alignas-aligned
  */
 #define __aligned(x)                    __attribute__((__aligned__(x)))
 #define __aligned_largest               __attribute__((__aligned__))
@@ -50,7 +52,7 @@
  * inlinable [-Wattributes]" is emitted).
  *
  *   gcc: https://gcc.gnu.org/onlinedocs/gcc/Common-Function-Attributes.html#index-always_005finline-function-attribute
- * clang: mentioned
+ * clang: https://clang.llvm.org/docs/AttributeReference.html#always-inline-force-inline
  */
 #define __always_inline                 inline __attribute__((__always_inline__))
 
@@ -79,6 +81,7 @@
  * Note the long name.
  *
  *   gcc: https://gcc.gnu.org/onlinedocs/gcc/Common-Function-Attributes.html#index-const-function-attribute
+ * clang: https://clang.llvm.org/docs/AttributeReference.html#const
  */
 #define __attribute_const__             __attribute__((__const__))
 
@@ -146,6 +149,7 @@
  * Optional: only supported since clang >= 14.0
  *
  *   gcc: https://gcc.gnu.org/onlinedocs/gcc/Common-Function-Attributes.html#index-error-function-attribute
+ * clang: https://clang.llvm.org/docs/AttributeReference.html#error-warning
  */
 #if __has_attribute(__error__)
 # define __compiletime_error(msg)       __attribute__((__error__(msg)))
@@ -186,6 +190,7 @@
 /*
  *   gcc: https://gcc.gnu.org/onlinedocs/gcc/Common-Type-Attributes.html#index-mode-type-attribute
  *   gcc: https://gcc.gnu.org/onlinedocs/gcc/Common-Variable-Attributes.html#index-mode-variable-attribute
+ * clang: https://clang.llvm.org/docs/AttributeReference.html#mode
  */
 #define __mode(x)                       __attribute__((__mode__(x)))
 
@@ -222,6 +227,7 @@
  *   return [expression];
  *
  *  gcc: https://gcc.gnu.org/onlinedocs/gcc/Statement-Attributes.html#Statement-Attributes
+ * clang: https://clang.llvm.org/docs/AttributeReference.html#fallthrough
  */
 #if __has_attribute(__fallthrough__)
 # define fallthrough                    __attribute__((__fallthrough__))
@@ -239,7 +245,7 @@
  * Note the missing underscores.
  *
  *   gcc: https://gcc.gnu.org/onlinedocs/gcc/Common-Function-Attributes.html#index-noinline-function-attribute
- * clang: mentioned
+ * clang: https://clang.llvm.org/docs/AttributeReference.html#noinline
  */
 #define   noinline                      __attribute__((__noinline__))
 
@@ -269,8 +275,7 @@
 
 /*
  *   gcc: https://gcc.gnu.org/onlinedocs/gcc/Common-Function-Attributes.html#index-noreturn-function-attribute
- * clang: https://clang.llvm.org/docs/AttributeReference.html#noreturn
- * clang: https://clang.llvm.org/docs/AttributeReference.html#id1
+ * clang: https://clang.llvm.org/docs/AttributeReference.html#noreturn-noreturn
  */
 #define __noreturn                      __attribute__((__noreturn__))
 
@@ -323,6 +328,7 @@
 
 /*
  *   gcc: https://gcc.gnu.org/onlinedocs/gcc/Common-Function-Attributes.html#index-pure-function-attribute
+ * clang: https://clang.llvm.org/docs/AttributeReference.html#pure
  */
 #define __pure                          __attribute__((__pure__))
 
@@ -358,6 +364,7 @@
 /*
  *   gcc: https://gcc.gnu.org/onlinedocs/gcc/Common-Function-Attributes.html#index-used-function-attribute
  *   gcc: https://gcc.gnu.org/onlinedocs/gcc/Common-Variable-Attributes.html#index-used-variable-attribute
+ * clang: https://clang.llvm.org/docs/AttributeReference.html#used
  */
 #define __used                          __attribute__((__used__))
 
@@ -384,6 +391,7 @@
  * Optional: only supported since clang >= 14.0
  *
  *   gcc: https://gcc.gnu.org/onlinedocs/gcc/Common-Function-Attributes.html#index-warning-function-attribute
+ * clang: https://clang.llvm.org/docs/AttributeReference.html#error-warning
  */
 #if __has_attribute(__warning__)
 # define __compiletime_warning(msg)     __attribute__((__warning__(msg)))
@@ -412,6 +420,7 @@
 /*
  *   gcc: https://gcc.gnu.org/onlinedocs/gcc/Common-Function-Attributes.html#index-weak-function-attribute
  *   gcc: https://gcc.gnu.org/onlinedocs/gcc/Common-Variable-Attributes.html#index-weak-variable-attribute
+ * clang: https://clang.llvm.org/docs/AttributeReference.html#weak
  */
 #define __weak                          __attribute__((__weak__))
 
