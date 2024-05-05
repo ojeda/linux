@@ -112,7 +112,7 @@
 
 /*
  * Optional: not supported by gcc
- * Optional: only supported since clang >= 14.0
+ * Optional: only supported since clang >= 14
  *
  * clang: https://clang.llvm.org/docs/AttributeReference.html#diagnose_as_builtin
  */
@@ -146,7 +146,7 @@
 #endif
 
 /*
- * Optional: only supported since clang >= 14.0
+ * Optional: only supported since clang >= 14
  *
  *   gcc: https://gcc.gnu.org/onlinedocs/gcc/Common-Function-Attributes.html#index-error-function-attribute
  * clang: https://clang.llvm.org/docs/AttributeReference.html#error-warning
@@ -262,7 +262,7 @@
 #endif
 
 /*
- * Optional: only supported since GCC >= 7.1
+ * Optional: only supported since gcc >= 7
  *
  *   gcc: https://gcc.gnu.org/onlinedocs/gcc/Common-Function-Attributes.html#index-no_005fprofile_005finstrument_005ffunction-function-attribute
  * clang: https://clang.llvm.org/docs/AttributeReference.html#no-profile-instrument-function
@@ -280,7 +280,7 @@
 #define __noreturn                      __attribute__((__noreturn__))
 
 /*
- * Optional: only supported since GCC >= 11.1
+ * Optional: only supported since gcc >= 11
  *
  *   gcc: https://gcc.gnu.org/onlinedocs/gcc/Common-Function-Attributes.html#index-no_005fstack_005fprotector-function-attribute
  * clang: https://clang.llvm.org/docs/AttributeReference.html#no-stack-protector-safebuffers
@@ -388,7 +388,7 @@
 #define __must_check                    __attribute__((__warn_unused_result__))
 
 /*
- * Optional: only supported since clang >= 14.0
+ * Optional: only supported since clang >= 14
  *
  *   gcc: https://gcc.gnu.org/onlinedocs/gcc/Common-Function-Attributes.html#index-warning-function-attribute
  * clang: https://clang.llvm.org/docs/AttributeReference.html#error-warning
@@ -400,7 +400,7 @@
 #endif
 
 /*
- * Optional: only supported since clang >= 14.0
+ * Optional: only supported since clang >= 14
  *
  * clang: https://clang.llvm.org/docs/AttributeReference.html#disable-sanitizer-instrumentation
  *
