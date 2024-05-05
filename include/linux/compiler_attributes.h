@@ -226,7 +226,7 @@
  *   goto <label>;
  *   return [expression];
  *
- *  gcc: https://gcc.gnu.org/onlinedocs/gcc/Statement-Attributes.html#Statement-Attributes
+ *   gcc: https://gcc.gnu.org/onlinedocs/gcc/Statement-Attributes.html#Statement-Attributes
  * clang: https://clang.llvm.org/docs/AttributeReference.html#fallthrough
  */
 #if __has_attribute(__fallthrough__)
@@ -236,7 +236,7 @@
 #endif
 
 /*
- * gcc: https://gcc.gnu.org/onlinedocs/gcc/Common-Function-Attributes.html#Common-Function-Attributes
+ *   gcc: https://gcc.gnu.org/onlinedocs/gcc/Common-Function-Attributes.html#Common-Function-Attributes
  * clang: https://clang.llvm.org/docs/AttributeReference.html#flatten
  */
 # define __flatten			__attribute__((flatten))
@@ -264,8 +264,8 @@
 /*
  * Optional: only supported since GCC >= 7.1
  *
- *      gcc: https://gcc.gnu.org/onlinedocs/gcc/Common-Function-Attributes.html#index-no_005fprofile_005finstrument_005ffunction-function-attribute
- *    clang: https://clang.llvm.org/docs/AttributeReference.html#no-profile-instrument-function
+ *   gcc: https://gcc.gnu.org/onlinedocs/gcc/Common-Function-Attributes.html#index-no_005fprofile_005finstrument_005ffunction-function-attribute
+ * clang: https://clang.llvm.org/docs/AttributeReference.html#no-profile-instrument-function
  */
 #if __has_attribute(__no_profile_instrument_function__)
 # define __no_profile                  __attribute__((__no_profile_instrument_function__))
@@ -283,7 +283,7 @@
  * Optional: only supported since GCC >= 11.1
  *
  *   gcc: https://gcc.gnu.org/onlinedocs/gcc/Common-Function-Attributes.html#index-no_005fstack_005fprotector-function-attribute
- *   clang: https://clang.llvm.org/docs/AttributeReference.html#no-stack-protector-safebuffers
+ * clang: https://clang.llvm.org/docs/AttributeReference.html#no-stack-protector-safebuffers
  */
 #if __has_attribute(__no_stack_protector__)
 # define __no_stack_protector		__attribute__((__no_stack_protector__))
