@@ -24,3 +24,7 @@
 # These functions use the `__preserve_most` calling convention, which neither bindgen
 # nor Rust currently understand, and which Clang currently declares to be unstable.
 --blocklist-function __list_.*_report
+
+# Depending on how the architecture defines `ARCH_SLAB_MINALIGN`, `bindgen` might generate a binding.
+# Disable this here as there is a `const` item that will always be generated in `bindings_helper.h`
+--blocklist-item ARCH_SLAB_MINALIGN
