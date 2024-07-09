@@ -841,7 +841,8 @@ impl OPP {
     }
 
     #[inline]
-    fn as_raw(&self) -> *mut bindings::dev_pm_opp {
+    /// Returns raw pointer to the OPP.
+    pub fn as_raw(&self) -> *mut bindings::dev_pm_opp {
         self.0.get()
     }
 

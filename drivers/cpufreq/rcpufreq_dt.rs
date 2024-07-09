@@ -10,6 +10,8 @@ use kernel::{
     str::CString, sync::Arc,
 };
 
+use kernel::types::ARef;
+
 // Finds exact supply name from the OF node.
 fn find_supply_name_exact(dev: &Device, name: &str) -> Option<CString> {
     let name_cstr = CString::try_from_fmt(fmt!("{}-supply", name)).ok()?;
@@ -139,6 +141,19 @@ impl cpufreq::Driver for CPUFreqDTDriver {
 
         mask.copy(policy.cpus());
 
+        pr_info!("TEST START\n");
+        let opp1 = opp_table.opp_from_freq(432000000, Some(true), None, opp::SearchType::Exact)?;
+        let opp_ptr = opp1.as_raw();
+        pr_info!("TEST MID\n");
+        drop(opp1);
+        pr_info!("TEST END\n");
+        pr_info!("TEST START\n");
+        // SAFETY: Test code
+        let opp: ARef<opp::OPP> = unsafe { opp::OPP::from_raw_opp(opp_ptr)?.into() };
+        pr_info!("TEST MID\n");
+        drop(opp);
+        pr_info!("TEST END\n");
+
         Ok(Arc::new(
             CPUFreqDTDevice {
                 opp_table,
@@ -178,7 +193,7 @@ impl cpufreq::Driver for CPUFreqDTDriver {
     }
 
     fn target_index(policy: &mut cpufreq::Policy, index: u32) -> Result<()> {
-        pr_info!("target_index\n");
+        // pr_info!("target_index\n");
         let data = match policy.data::<Self::PData>() {
             Some(data) => data,
             None => return Err(ENOENT),

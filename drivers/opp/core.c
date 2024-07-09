@@ -1734,12 +1734,16 @@ static void _opp_kref_release(struct kref *kref)
 
 void dev_pm_opp_get(struct dev_pm_opp *opp)
 {
+	if (opp->rates[0] == 432000000)
+		pr_info("%s: %d: %lu\n", __func__, __LINE__, opp->rates[0]);
 	kref_get(&opp->kref);
 }
 EXPORT_SYMBOL_GPL(dev_pm_opp_get);
 
 void dev_pm_opp_put(struct dev_pm_opp *opp)
 {
+	if (opp->rates[0] == 432000000)
+		pr_info("%s: %d: %lu\n", __func__, __LINE__, opp->rates[0]);
 	kref_put_mutex(&opp->kref, _opp_kref_release, &opp->opp_table->lock);
 }
 EXPORT_SYMBOL_GPL(dev_pm_opp_put);
