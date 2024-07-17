@@ -178,6 +178,20 @@ static bool is_sibling_call(struct instruction *insn)
 }
 
 /*
+ * Checks if a string ends with another.
+ */
+static bool str_ends_with(const char *s, const char *sub)
+{
+	const int slen = strlen(s);
+	const int sublen = strlen(sub);
+
+	if (sublen > slen)
+		return 0;
+
+	return !memcmp(s + slen - sublen, sub, sublen);
+}
+
+/*
  * This checks to see if the given function is a "noreturn" function.
  *
  * For global functions which are outside the scope of this object file, we
@@ -202,10 +216,30 @@ static bool __dead_end_function(struct objtool_file *file, struct symbol *func,
 	if (!func)
 		return false;
 
-	if (func->bind == STB_GLOBAL || func->bind == STB_WEAK)
+	if (func->bind == STB_GLOBAL || func->bind == STB_WEAK) {
+		/*
+		 * Rust standard library functions.
+		 *
+		 * These are just heuristics -- we do not control the precise symbol
+		 * name, due to the crate disambiguators (which depend on the compiler)
+		 * as well as changes to the source code itself between versions.
+		 */
+		if (!strncmp(func->name, "_R", 2) &&
+		    (str_ends_with(func->name, "_4core6option13unwrap_failed")			||
+		     str_ends_with(func->name, "_4core6result13unwrap_failed")			||
+		     str_ends_with(func->name, "_4core9panicking5panic")			||
+		     str_ends_with(func->name, "_4core9panicking9panic_fmt")			||
+		     str_ends_with(func->name, "_4core9panicking14panic_explicit")		||
+		     str_ends_with(func->name, "_4core9panicking18panic_bounds_check")		||
+		     strstr(func->name, "_4core9panicking11panic_const24panic_const_")		||
+		     (strstr(func->name, "_4core5slice5index24slice_") &&
+		      str_ends_with(func->name, "_fail"))))
+			return true;
+
 		for (i = 0; i < ARRAY_SIZE(global_noreturns); i++)
 			if (!strcmp(func->name, global_noreturns[i]))
 				return true;
+	}
 
 	if (func->bind == STB_WEAK)
 		return false;
