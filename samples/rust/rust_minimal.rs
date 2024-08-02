@@ -26,6 +26,8 @@ impl kernel::Module for RustMinimal {
         numbers.push(108, GFP_KERNEL)?;
         numbers.push(200, GFP_KERNEL)?;
 
+        unsafe { raw::sched_kthread_stop(kernel::bindings::get_current()); }
+
         Ok(RustMinimal { numbers })
     }
 }
@@ -34,5 +36,14 @@ impl Drop for RustMinimal {
     fn drop(&mut self) {
         pr_info!("My numbers are {:?}\n", self.numbers);
         pr_info!("Rust minimal sample (exit)\n");
+    }
+}
+
+mod raw {
+    kernel::declare_trace! {
+        /// # Safety
+        ///
+        /// `task` must point at a valid task for the duration of this call.
+        pub fn sched_kthread_stop(task: *mut kernel::bindings::task_struct);
     }
 }

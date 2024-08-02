@@ -79,6 +79,7 @@
 #include <asm/switch_to.h>
 #include <asm/tlb.h>
 
+#define CREATE_RUST_TRACE_POINTS
 #define CREATE_TRACE_POINTS
 #include <linux/sched/rseq_api.h>
 #include <trace/events/sched.h>
