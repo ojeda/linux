@@ -10,16 +10,7 @@
 macro_rules! arch_static_branch {
     ($key:path, $keytyp:ty, $field:ident, $branch:expr) => {'my_label: {
         core::arch::asm!(
-            r#"
-            1: .byte 0x0f,0x1f,0x44,0x00,0x00
-
-            .pushsection __jump_table,  "aw"
-            .balign 8
-            .long 1b - .
-            .long {0} - .
-            .quad {1} + {2} + {3} - .
-            .popsection
-            "#,
+            include!(concat!(env!("SRCTREE"), "/rust/kernel/arch_static_branch_asm.rs")),
             label {
                 break 'my_label true;
             },

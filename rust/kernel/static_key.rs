@@ -6,6 +6,14 @@
 
 use crate::bindings::*;
 
+#[doc(hidden)]
+#[macro_export]
+macro_rules! concat_literals {
+    ($( $asm:literal )* ) => {
+        ::core::concat!($($asm),*)
+    };
+}
+
 /// Branch based on a static key.
 ///
 /// Takes three arguments:
