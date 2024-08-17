@@ -32,6 +32,9 @@ configurations.
 .. only:: not rustdoc and html
 
 	This documentation does not include rustdoc generated information.
+	A pre-generated version is provided at:
+
+		https://rust.docs.kernel.org
 
 .. toctree::
     :maxdepth: 1
