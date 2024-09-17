@@ -40,7 +40,7 @@ $(addprefix $(MODLIB)/, modules.builtin modules.builtin.modinfo modules.builtin.
 
 endif
 
-modules := $(call read-file, $(MODORDER))
+modules := $(call read-file, modules.order)
 
 ifeq ($(KBUILD_EXTMOD),)
 dst := $(MODLIB)/kernel
