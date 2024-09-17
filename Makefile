@@ -1739,9 +1739,8 @@ PHONY += rustfmt rustfmtcheck
 # when matching, which is a problem when e.g. `srctree` is `..`.
 # We `grep` afterwards in order to remove the directory entry itself.
 rustfmt:
-	$(Q)find $(abs_srctree) -type f -name '*.rs' \
-		-o -path $(abs_objtree)/rust/test -prune \
-		| grep -Fv $(abs_objtree)/rust/test \
+	$(Q)find $(srctree) -path $(srctree)/rust/test -prune \
+		-o -type f -name '*.rs' -print \
 		| grep -Fv generated \
 		| xargs $(RUSTFMT) $(rustfmt_flags)
 
