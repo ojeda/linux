@@ -66,7 +66,7 @@ Options
 	of the kernel output directory if the kernel was built in a separate
 	build directory.)
 
-	make -C $KDIR M=$PWD
+	make -C $KDIR M=$PWD [MO=$BUILD_DIR]
 
 	-C $KDIR
 		The directory that contains the kernel and relevant build
