@@ -180,7 +180,20 @@ ifeq ("$(origin O)", "command line")
   KBUILD_OUTPUT := $(O)
 endif
 
-output := $(KBUILD_OUTPUT)
+ifdef KBUILD_EXTMOD
+    ifdef KBUILD_OUTPUT
+        objtree := $(realpath $(KBUILD_OUTPUT))
+        $(if $(objtree),,$(error specified kernel directory "$(KBUILD_OUTPUT)" does not exist))
+    else
+        objtree := $(CURDIR)
+    endif
+    output := $(KBUILD_EXTMOD)
+else
+    objtree := .
+    output := $(KBUILD_OUTPUT)
+endif
+
+export objtree
 
 # Do we want to change the working directory?
 ifneq ($(output),)
@@ -248,8 +261,6 @@ ifneq ($(KBUILD_ABS_SRCTREE),)
 srctree := $(abs_srctree)
 endif
 
-objtree		:= .
-
 VPATH		:=
 
 ifeq ($(KBUILD_EXTMOD),)
@@ -258,7 +269,7 @@ VPATH		:= $(srctree)
 endif
 endif
 
-export building_out_of_srctree srctree objtree VPATH
+export building_out_of_srctree srctree VPATH
 
 # To make sure we do not include .config for any of the *config targets
 # catch them early, and hand them over to scripts/kconfig/Makefile
@@ -711,7 +722,7 @@ endif
 # in addition to whatever we do anyway.
 # Just "make" or "make all" shall build modules as well
 
-ifneq ($(filter all modules nsdeps %compile_commands.json clang-%,$(MAKECMDGOALS)),)
+ifneq ($(filter all modules nsdeps compile_commands.json clang-%,$(MAKECMDGOALS)),)
   KBUILD_MODULES := 1
 endif
 
@@ -1105,7 +1116,7 @@ export MODLIB
 
 PHONY += prepare0
 
-export extmod_prefix = $(if $(KBUILD_EXTMOD),$(KBUILD_EXTMOD)/)
+export extmod_prefix =
 export MODORDER := $(extmod_prefix)modules.order
 export MODULES_NSDEPS := $(extmod_prefix)modules.nsdeps
 
@@ -1798,14 +1809,10 @@ filechk_kernel.release = echo $(KERNELRELEASE)
 KBUILD_BUILTIN :=
 KBUILD_MODULES := 1
 
-build-dir := $(KBUILD_EXTMOD)
+build-dir := .
 
-compile_commands.json: $(extmod_prefix)compile_commands.json
-PHONY += compile_commands.json
-
-clean-dirs := $(KBUILD_EXTMOD)
-clean: private rm-files := $(KBUILD_EXTMOD)/Module.symvers $(KBUILD_EXTMOD)/modules.nsdeps \
-	$(KBUILD_EXTMOD)/compile_commands.json
+clean-dirs := .
+clean: private rm-files := Module.symvers modules.nsdeps compile_commands.json
 
 PHONY += prepare
 # now expand this into a simple variable to reduce the cost of shell evaluations
@@ -1947,7 +1954,7 @@ $(clean-dirs):
 
 clean: $(clean-dirs)
 	$(call cmd,rmfiles)
-	@find $(or $(KBUILD_EXTMOD), .) $(RCS_FIND_IGNORE) \
+	@find . $(RCS_FIND_IGNORE) \
 		\( -name '*.[aios]' -o -name '*.rsi' -o -name '*.ko' -o -name '.*.cmd' \
 		-o -name '*.ko.*' \
 		-o -name '*.dtb' -o -name '*.dtbo' \
@@ -1980,7 +1987,12 @@ tags TAGS cscope gtags: FORCE
 PHONY += rust-analyzer
 rust-analyzer:
 	+$(Q)$(CONFIG_SHELL) $(srctree)/scripts/rust_is_available.sh
+ifdef KBUILD_EXTMOD
+# FIXME: external modules must not descend into a sub-directory of the kernel
+	$(Q)$(MAKE) $(build)=$(objtree)/rust src=$(srctree)/rust $@
+else
 	$(Q)$(MAKE) $(build)=rust $@
+endif
 
 # Script to generate missing namespace dependencies
 # ---------------------------------------------------------------------------

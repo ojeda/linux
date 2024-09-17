@@ -80,10 +80,10 @@ command results in a shift count error.'
     NPROC=1
 else
     ONLINE=0
-    if [ "$KBUILD_EXTMOD" = "" ] ; then
-        OPTIONS="--dir $srctree $COCCIINCLUDE"
+    if [ "${VPATH+set}" ] ; then
+        OPTIONS="--dir $VPATH $COCCIINCLUDE"
     else
-        OPTIONS="--dir $KBUILD_EXTMOD $COCCIINCLUDE"
+        OPTIONS="--dir . $COCCIINCLUDE"
     fi
 
     # Use only one thread per core by default if hyperthreading is enabled
