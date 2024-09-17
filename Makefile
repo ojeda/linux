@@ -134,6 +134,10 @@ ifeq ("$(origin M)", "command line")
   KBUILD_EXTMOD := $(M)
 endif
 
+ifeq ("$(origin MO)", "command line")
+  KBUILD_EXTMOD_OUTPUT := $(MO)
+endif
+
 $(if $(word 2, $(KBUILD_EXTMOD)), \
 	$(error building multiple external modules is not supported))
 
@@ -187,7 +191,11 @@ ifdef KBUILD_EXTMOD
     else
         objtree := $(CURDIR)
     endif
-    output := $(KBUILD_EXTMOD)
+    output := $(or $(KBUILD_EXTMOD_OUTPUT),$(KBUILD_EXTMOD))
+    # KBUILD_EXTMOD might be a relative path. Remember its absolute path before
+    # Make changes the working directory.
+    export abs_extmodtree := $(realpath $(KBUILD_EXTMOD))
+    $(if $(abs_extmodtree),,$(error specified external module directory "$(KBUILD_EXTMOD)" does not exist))
 else
     objtree := .
     output := $(KBUILD_OUTPUT)
@@ -246,7 +254,6 @@ else # need-sub-make
 ifeq ($(abs_srctree),$(CURDIR))
         # building in the source tree
         srctree := .
-	building_out_of_srctree :=
 else
         ifeq ($(abs_srctree)/,$(dir $(CURDIR)))
                 # building in a subdirectory of the source tree
@@ -254,22 +261,23 @@ else
         else
                 srctree := $(abs_srctree)
         endif
-	building_out_of_srctree := 1
 endif
 
 ifneq ($(KBUILD_ABS_SRCTREE),)
 srctree := $(abs_srctree)
 endif
 
-VPATH		:=
+export srctree
 
-ifeq ($(KBUILD_EXTMOD),)
-ifdef building_out_of_srctree
-VPATH		:= $(srctree)
-endif
-endif
+_vpath = $(or $(abs_extmodtree),$(srctree))
 
-export building_out_of_srctree srctree VPATH
+ifeq ($(realpath $(_vpath)),$(CURDIR))
+building_out_of_srctree :=
+VPATH :=
+else
+export building_out_of_srctree := 1
+export VPATH := $(_vpath)
+endif
 
 # To make sure we do not include .config for any of the *config targets
 # catch them early, and hand them over to scripts/kconfig/Makefile
@@ -550,7 +558,7 @@ USERINCLUDE    := \
 LINUXINCLUDE    := \
 		-I$(srctree)/arch/$(SRCARCH)/include \
 		-I$(objtree)/arch/$(SRCARCH)/include/generated \
-		$(if $(building_out_of_srctree),-I$(srctree)/include) \
+		-I$(srctree)/include \
 		-I$(objtree)/include \
 		$(USERINCLUDE)
 
@@ -644,6 +652,7 @@ quiet_cmd_makefile = GEN     Makefile
 	} > Makefile
 
 outputmakefile:
+ifeq ($(KBUILD_EXTMOD),)
 	@if [ -f $(srctree)/.config -o \
 		 -d $(srctree)/include/config -o \
 		 -d $(srctree)/arch/$(SRCARCH)/include/generated ]; then \
@@ -653,7 +662,16 @@ outputmakefile:
 		echo >&2 "***"; \
 		false; \
 	fi
-	$(Q)ln -fsn $(srctree) source
+else
+	@if [ -f $(KBUILD_EXTMOD)/modules.order ]; then \
+		echo >&2 "***"; \
+		echo >&2 "*** The external module source tree is not clean."; \
+		echo >&2 "*** Please run 'make -C $(abs_srctree) M=$(realpath $(KBUILD_EXTMOD)) clean'"; \
+		echo >&2 "***"; \
+		false; \
+	fi
+endif
+	$(Q)ln -fsn $(_vpath) source
 	$(call cmd,makefile)
 	$(Q)test -e .gitignore || \
 	{ echo "# this is build directory, ignore it"; echo "*"; } > .gitignore
@@ -1924,6 +1942,8 @@ single-goals := $(addprefix $(build-dir)/, $(single-no-ko))
 KBUILD_MODULES := 1
 
 endif
+
+prepare: outputmakefile
 
 # Preset locale variables to speed up the build process. Limit locale
 # tweaks to this spot to avoid wrong language settings when running

@@ -95,7 +95,7 @@ executed to make module versioning work.
 	of the kernel output directory if the kernel was built in a separate
 	build directory.)
 
-	make -C $KDIR M=$PWD
+	make -C $KDIR M=$PWD [MO=$BUILD_DIR]
 
 	-C $KDIR
 		The directory that contains the kernel and relevant build
@@ -108,6 +108,9 @@ executed to make module versioning work.
 		The value given to "M" is the absolute path of the
 		directory where the external module (kbuild file) is
 		located.
+
+	MO=$BUILD_DIR
+		Speficies a separate output directory for the external module.
 
 2.3 Targets
 ===========
