@@ -74,7 +74,7 @@ executed to make module versioning work.
 
 	The command to build an external module is::
 
-		$ make -C <path_to_kernel_src> M=$PWD
+		$ make -C <path_to_kernel_dir> M=$PWD
 
 	The kbuild system knows that an external module is being built
 	due to the "M=<dir>" option given in the command.
@@ -91,12 +91,15 @@ executed to make module versioning work.
 2.2 Options
 ===========
 
-	($KDIR refers to the path of the kernel source directory.)
+	($KDIR refers to the path of the kernel source directory, or the path
+	of the kernel output directory if the kernel was built in a separate
+	build directory.)
 
 	make -C $KDIR M=$PWD
 
 	-C $KDIR
-		The directory where the kernel source is located.
+		The directory that contains the kernel and relevant build
+		artifacts used for building an external module.
 		"make" will actually change to the specified directory
 		when executing and will change back when finished.
 
