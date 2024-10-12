@@ -729,13 +729,13 @@ pub struct Cursor<'a, K, V> {
 // SAFETY: The [`Cursor`] has exclusive access to both `K` and `V`, so it is sufficient to require them to be `Send`.
 // The cursor only gives out immutable references to the keys, but since it has excusive access to those same
 // keys, `Send` is sufficient. `Sync` would be okay, but it is more restrictive to the user.
-unsafe impl<'a, K: Send, V: Send> Send for Cursor<'a, K, V> {}
+unsafe impl<K: Send, V: Send> Send for Cursor<'_, K, V> {}
 
 // SAFETY: The [`Cursor`] gives out immutable references to K and mutable references to V,
 // so it has the same thread safety requirements as mutable references.
-unsafe impl<'a, K: Sync, V: Sync> Sync for Cursor<'a, K, V> {}
+unsafe impl<K: Sync, V: Sync> Sync for Cursor<'_, K, V> {}
 
-impl<'a, K, V> Cursor<'a, K, V> {
+impl<K, V> Cursor<'_, K, V> {
     /// The current node
     pub fn current(&self) -> (&K, &V) {
         // SAFETY:
@@ -948,11 +948,11 @@ pub struct Iter<'a, K, V> {
 
 // SAFETY: The [`Iter`] gives out immutable references to K and V, so it has the same
 // thread safety requirements as immutable references.
-unsafe impl<'a, K: Sync, V: Sync> Send for Iter<'a, K, V> {}
+unsafe impl<K: Sync, V: Sync> Send for Iter<'_, K, V> {}
 
 // SAFETY: The [`Iter`] gives out immutable references to K and V, so it has the same
 // thread safety requirements as immutable references.
-unsafe impl<'a, K: Sync, V: Sync> Sync for Iter<'a, K, V> {}
+unsafe impl<K: Sync, V: Sync> Sync for Iter<'_, K, V> {}
 
 impl<'a, K, V> Iterator for Iter<'a, K, V> {
     type Item = (&'a K, &'a V);
@@ -983,11 +983,11 @@ pub struct IterMut<'a, K, V> {
 // SAFETY: The [`IterMut`] has exclusive access to both `K` and `V`, so it is sufficient to require them to be `Send`.
 // The iterator only gives out immutable references to the keys, but since the iterator has excusive access to those same
 // keys, `Send` is sufficient. `Sync` would be okay, but it is more restrictive to the user.
-unsafe impl<'a, K: Send, V: Send> Send for IterMut<'a, K, V> {}
+unsafe impl<K: Send, V: Send> Send for IterMut<'_, K, V> {}
 
 // SAFETY: The [`IterMut`] gives out immutable references to K and mutable references to V, so it has the same
 // thread safety requirements as mutable references.
-unsafe impl<'a, K: Sync, V: Sync> Sync for IterMut<'a, K, V> {}
+unsafe impl<K: Sync, V: Sync> Sync for IterMut<'_, K, V> {}
 
 impl<'a, K, V> Iterator for IterMut<'a, K, V> {
     type Item = (&'a K, &'a mut V);
