@@ -129,7 +129,16 @@ impl Task {
     pub fn group_leader(&self) -> &Task {
         // SAFETY: By the type invariant, we know that `self.0` is a valid task. Valid tasks always
         // have a valid `group_leader`.
-        let ptr = unsafe { *ptr::addr_of!((*self.0.get()).group_leader) };
+        let ptr = unsafe {
+            #[cfg(not(CONFIG_RANDSTRUCT))]
+            {
+                *ptr::addr_of!((*self.0.get()).group_leader)
+            }
+            #[cfg(CONFIG_RANDSTRUCT)]
+            {
+                *ptr::addr_of!((*self.0.get()).__bindgen_anon_1.group_leader)
+            }
+        };
 
         // SAFETY: The lifetime of the returned task reference is tied to the lifetime of `self`,
         // and given that a task has a reference to its group leader, we know it must be valid for
@@ -141,7 +150,16 @@ impl Task {
     pub fn pid(&self) -> Pid {
         // SAFETY: By the type invariant, we know that `self.0` is a valid task. Valid tasks always
         // have a valid pid.
-        unsafe { *ptr::addr_of!((*self.0.get()).pid) }
+        unsafe {
+            #[cfg(not(CONFIG_RANDSTRUCT))]
+            {
+                *ptr::addr_of!((*self.0.get()).pid)
+            }
+            #[cfg(CONFIG_RANDSTRUCT)]
+            {
+                *ptr::addr_of!((*self.0.get()).__bindgen_anon_1.pid)
+            }
+        }
     }
 
     /// Determines whether the given task has pending signals.
