@@ -207,7 +207,16 @@ impl Task {
     pub fn pid(&self) -> Pid {
         // SAFETY: The pid of a task never changes after initialization, so reading this field is
         // not a data race.
-        unsafe { *ptr::addr_of!((*self.as_ptr()).pid) }
+        unsafe {
+            #[cfg(not(CONFIG_RANDSTRUCT))]
+            {
+                *ptr::addr_of!((*self.as_ptr()).pid)
+            }
+            #[cfg(CONFIG_RANDSTRUCT)]
+            {
+                *ptr::addr_of!((*self.as_ptr()).__bindgen_anon_1.pid)
+            }
+        }
     }
 
     /// Returns the UID of the given task.
@@ -278,7 +287,16 @@ impl CurrentTask {
     pub fn mm(&self) -> Option<&MmWithUser> {
         // SAFETY: The `mm` field of `current` is not modified from other threads, so reading it is
         // not a data race.
-        let mm = unsafe { (*self.as_ptr()).mm };
+        let mm = unsafe {
+            #[cfg(not(CONFIG_RANDSTRUCT))]
+            {
+                (*self.as_ptr()).mm
+            }
+            #[cfg(CONFIG_RANDSTRUCT)]
+            {
+                (*self.as_ptr()).__bindgen_anon_1.mm
+            }
+        };
 
         if mm.is_null() {
             return None;
@@ -337,7 +355,16 @@ impl CurrentTask {
     pub fn group_leader(&self) -> &Task {
         // SAFETY: The group leader of a task never changes while the task is running, and `self`
         // is the current task, which is guaranteed running.
-        let ptr = unsafe { (*self.as_ptr()).group_leader };
+        let ptr = unsafe {
+            #[cfg(not(CONFIG_RANDSTRUCT))]
+            {
+                (*self.as_ptr()).group_leader
+            }
+            #[cfg(CONFIG_RANDSTRUCT)]
+            {
+                (*self.as_ptr()).__bindgen_anon_1.group_leader
+            }
+        };
 
         // SAFETY: `current->group_leader` stays valid for at least the duration in which `current`
         // is running, and the signature of this function ensures that the returned `&Task` can

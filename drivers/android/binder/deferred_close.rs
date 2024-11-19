@@ -69,9 +69,20 @@ impl DeferredFdCloser {
         // Task works are not available on kthreads.
         let current = kernel::current!();
 
-        // Check if this is a kthread.
         // SAFETY: Reading `flags` from a task is always okay.
-        if unsafe { ((*current.as_ptr()).flags & bindings::PF_KTHREAD) != 0 } {
+        let flags = unsafe {
+            #[cfg(not(CONFIG_RANDSTRUCT))]
+            {
+                (*current.as_ptr()).flags
+            }
+            #[cfg(CONFIG_RANDSTRUCT)]
+            {
+                (*current.as_ptr()).__bindgen_anon_1.flags
+            }
+        };
+
+        // Check if this is a kthread.
+        if (flags & bindings::PF_KTHREAD) != 0 {
             return Err(DeferredFdCloseError::TaskWorkUnavailable);
         }
 
@@ -135,6 +146,18 @@ impl DeferredFdCloser {
         // SAFETY: The `file` pointer points at a file with a non-zero refcount.
         unsafe { bindings::get_file(file) };
 
+        // SAFETY: Reading `files` from a task is always okay.
+        let files = unsafe {
+            #[cfg(not(CONFIG_RANDSTRUCT))]
+            {
+                (*current).files
+            }
+            #[cfg(CONFIG_RANDSTRUCT)]
+            {
+                (*current).__bindgen_anon_1.files
+            }
+        };
+
         // This method closes the fd, consuming one of our two refcounts. There could be active
         // light refcounts created from that fd, so we must ensure that the file has a positive
         // refcount for the duration of those active light refcounts. We do that by holding on to
@@ -145,7 +168,7 @@ impl DeferredFdCloser {
         // `current->files`.
         //
         // Note: fl_owner_t is currently a void pointer.
-        unsafe { bindings::filp_close(file, (*current).files as bindings::fl_owner_t) };
+        unsafe { bindings::filp_close(file, files as bindings::fl_owner_t) };
 
         // We update the file pointer that the task work is supposed to fput. This transfers
         // ownership of our last refcount.
