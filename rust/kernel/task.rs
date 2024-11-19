@@ -4,13 +4,13 @@
 //!
 //! C header: [`include/linux/sched.h`](srctree/include/linux/sched.h).
 
+use crate::ffi::{c_int, c_long, c_uint};
 use crate::{
     bindings,
-    types::{NotThreadSafe, Opaque},
+    types::{ARef, NotThreadSafe, Opaque},
 };
 use core::{
     cmp::{Eq, PartialEq},
-    ffi::{c_int, c_long, c_uint},
     ops::Deref,
     ptr,
 };
