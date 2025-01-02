@@ -503,7 +503,6 @@ __attribute__((nonnull))
 static inline void
 __drm_gem_object_put(struct drm_gem_object *obj)
 {
-	kref_put(&obj->refcount, drm_gem_object_free);
 }
 
 /**
