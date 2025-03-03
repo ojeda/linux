@@ -6,6 +6,8 @@
 // and thus add a dependency on `include/config/RUSTC_VERSION_TEXT`, which is
 // touched by Kconfig when the version string from the compiler changes.
 
+#![feature(lint_reasons)]
+
 #[macro_use]
 #[expect(unused_macros)]
 mod quote;
