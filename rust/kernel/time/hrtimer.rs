@@ -68,8 +68,9 @@
 //! `start` operation.
 
 use super::ClockId;
-use crate::{init::PinInit, prelude::*, time::Ktime, types::Opaque};
+use crate::{prelude::*, time::Ktime, types::Opaque};
 use core::marker::PhantomData;
+use pin_init::PinInit;
 
 /// A timer backed by a C `struct hrtimer`.
 ///
