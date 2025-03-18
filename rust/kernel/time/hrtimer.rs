@@ -384,9 +384,9 @@ pub unsafe trait HasHrTimer<T> {
 #[repr(u32)]
 pub enum HrTimerRestart {
     /// Timer should not be restarted.
-    NoRestart = bindings::hrtimer_restart_HRTIMER_NORESTART,
+    NoRestart = bindings::hrtimer_restart_HRTIMER_NORESTART as u32,
     /// Timer should be restarted.
-    Restart = bindings::hrtimer_restart_HRTIMER_RESTART,
+    Restart = bindings::hrtimer_restart_HRTIMER_RESTART as u32,
 }
 
 impl HrTimerRestart {
