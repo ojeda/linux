@@ -116,9 +116,24 @@ def generate_crates(srctree, objtree, sysroot_src, external_src, cfgs):
             "exclude_dirs": [],
         }
 
+    append_crate(
+        "pin_init_internal",
+        srctree / "rust" / "pin-init" / "internal" / "src" / "lib.rs",
+        [],
+        cfg=["kernel"],
+        is_proc_macro=True,
+    )
+
+    append_crate(
+        "pin_init",
+        srctree / "rust" / "pin-init" / "src" / "lib.rs",
+        ["core", "pin_init_internal", "macros"],
+        cfg=["kernel"],
+    )
+
     append_crate_with_generated("bindings", ["core"])
     append_crate_with_generated("uapi", ["core"])
-    append_crate_with_generated("kernel", ["core", "macros", "build_error", "bindings", "uapi"])
+    append_crate_with_generated("kernel", ["core", "macros", "build_error", "bindings", "pin_init", "uapi"])
 
     def is_root_crate(build_file, target):
         try:
