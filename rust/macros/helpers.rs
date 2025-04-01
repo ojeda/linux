@@ -81,7 +81,7 @@ pub(crate) fn function_name(input: TokenStream) -> Option<Ident> {
                 }
                 return None;
             }
-            _ => continue,
+            _ => (),
         }
     }
     None

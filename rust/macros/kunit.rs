@@ -54,7 +54,7 @@ pub(crate) fn kunit_tests(attr: TokenStream, ts: TokenStream) -> TokenStream {
                     };
                     tests.push(test_name);
                 }
-                _ => continue,
+                _ => (),
             },
             _ => (),
         }
