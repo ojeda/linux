@@ -7,6 +7,7 @@
 
 use super::LockClassKey;
 use crate::{
+    prelude::*,
     str::CStr,
     types::{NotThreadSafe, Opaque, ScopeGuard},
 };
@@ -50,11 +51,7 @@ pub unsafe trait Backend {
     ///
     /// `ptr` must be valid for write for the duration of the call, while `name` and `key` must
     /// remain valid for read indefinitely.
-    unsafe fn init(
-        ptr: *mut Self::State,
-        name: *const crate::ffi::c_char,
-        key: *mut bindings::lock_class_key,
-    );
+    unsafe fn init(ptr: *mut Self::State, name: *const c_char, key: *mut bindings::lock_class_key);
 
     /// Acquires the lock, making the caller its owner.
     ///

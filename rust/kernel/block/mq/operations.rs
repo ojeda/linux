@@ -132,7 +132,7 @@ impl<T: Operations> OperationsVTable<T> {
     unsafe extern "C" fn poll_callback(
         _hctx: *mut bindings::blk_mq_hw_ctx,
         _iob: *mut bindings::io_comp_batch,
-    ) -> crate::ffi::c_int {
+    ) -> c_int {
         T::poll().into()
     }
 
@@ -146,9 +146,9 @@ impl<T: Operations> OperationsVTable<T> {
     /// for the same context.
     unsafe extern "C" fn init_hctx_callback(
         _hctx: *mut bindings::blk_mq_hw_ctx,
-        _tagset_data: *mut crate::ffi::c_void,
-        _hctx_idx: crate::ffi::c_uint,
-    ) -> crate::ffi::c_int {
+        _tagset_data: *mut c_void,
+        _hctx_idx: c_uint,
+    ) -> c_int {
         from_result(|| Ok(0))
     }
 
@@ -160,7 +160,7 @@ impl<T: Operations> OperationsVTable<T> {
     /// This function may only be called by blk-mq C infrastructure.
     unsafe extern "C" fn exit_hctx_callback(
         _hctx: *mut bindings::blk_mq_hw_ctx,
-        _hctx_idx: crate::ffi::c_uint,
+        _hctx_idx: c_uint,
     ) {
     }
 
@@ -177,9 +177,9 @@ impl<T: Operations> OperationsVTable<T> {
     unsafe extern "C" fn init_request_callback(
         _set: *mut bindings::blk_mq_tag_set,
         rq: *mut bindings::request,
-        _hctx_idx: crate::ffi::c_uint,
-        _numa_node: crate::ffi::c_uint,
-    ) -> crate::ffi::c_int {
+        _hctx_idx: c_uint,
+        _numa_node: c_uint,
+    ) -> c_int {
         from_result(|| {
             // SAFETY: By the safety requirements of this function, `rq` points
             // to a valid allocation.
@@ -204,7 +204,7 @@ impl<T: Operations> OperationsVTable<T> {
     unsafe extern "C" fn exit_request_callback(
         _set: *mut bindings::blk_mq_tag_set,
         rq: *mut bindings::request,
-        _hctx_idx: crate::ffi::c_uint,
+        _hctx_idx: c_uint,
     ) {
         // SAFETY: The tagset invariants guarantee that all requests are allocated with extra memory
         // for the request data.

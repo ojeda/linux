@@ -16,6 +16,7 @@ use core::ptr::NonNull;
 use crate::alloc::{AllocError, Allocator};
 use crate::bindings;
 use crate::pr_warn;
+use crate::prelude::*;
 
 /// The contiguous kernel allocator.
 ///
@@ -57,9 +58,7 @@ fn aligned_size(new_layout: Layout) -> usize {
 /// # Invariants
 ///
 /// One of the following: `krealloc`, `vrealloc`, `kvrealloc`.
-struct ReallocFunc(
-    unsafe extern "C" fn(*const crate::ffi::c_void, usize, u32) -> *mut crate::ffi::c_void,
-);
+struct ReallocFunc(unsafe extern "C" fn(*const c_void, usize, u32) -> *mut c_void);
 
 impl ReallocFunc {
     // INVARIANT: `krealloc` satisfies the type invariants.

@@ -10,7 +10,7 @@ use crate::{
     bindings,
     block::mq::{operations::OperationsVTable, request::RequestDataWrapper, Operations},
     error,
-    prelude::try_pin_init,
+    prelude::*,
     types::Opaque,
 };
 use core::{convert::TryInto, marker::PhantomData};
@@ -52,7 +52,7 @@ impl<T: Operations> TagSet<T> {
                     queue_depth: num_tags,
                     cmd_size,
                     flags: 0,
-                    driver_data: core::ptr::null_mut::<crate::ffi::c_void>(),
+                    driver_data: core::ptr::null_mut::<c_void>(),
                     nr_maps: num_maps,
                     ..tag_set
                 }

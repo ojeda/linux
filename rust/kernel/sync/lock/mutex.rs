@@ -4,6 +4,8 @@
 //!
 //! This module allows Rust code to use the kernel's `struct mutex`.
 
+use crate::prelude::*;
+
 /// Creates a [`Mutex`] initialiser with the given name and a newly-created lock class.
 ///
 /// It uses the name if one is given, otherwise it generates one based on the file name and line
@@ -102,11 +104,7 @@ unsafe impl super::Backend for MutexBackend {
     type State = bindings::mutex;
     type GuardState = ();
 
-    unsafe fn init(
-        ptr: *mut Self::State,
-        name: *const crate::ffi::c_char,
-        key: *mut bindings::lock_class_key,
-    ) {
+    unsafe fn init(ptr: *mut Self::State, name: *const c_char, key: *mut bindings::lock_class_key) {
         // SAFETY: The safety requirements ensure that `ptr` is valid for writes, and `name` and
         // `key` are valid for read indefinitely.
         unsafe { bindings::__mutex_init(ptr, name, key) }

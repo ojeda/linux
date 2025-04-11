@@ -8,16 +8,18 @@
 //! C header: [`include/linux/jiffies.h`](srctree/include/linux/jiffies.h).
 //! C header: [`include/linux/ktime.h`](srctree/include/linux/ktime.h).
 
+use crate::prelude::*;
+
 pub mod hrtimer;
 
 /// The number of nanoseconds per millisecond.
 pub const NSEC_PER_MSEC: i64 = bindings::NSEC_PER_MSEC as i64;
 
 /// The time unit of Linux kernel. One jiffy equals (1/HZ) second.
-pub type Jiffies = crate::ffi::c_ulong;
+pub type Jiffies = c_ulong;
 
 /// The millisecond time unit.
-pub type Msecs = crate::ffi::c_uint;
+pub type Msecs = c_uint;
 
 /// Converts milliseconds to jiffies.
 #[inline]

@@ -12,7 +12,6 @@ use crate::{
     bindings,
     device::Device,
     error::{to_result, Error, Result, VTABLE_DEFAULT_ERROR},
-    ffi::{c_int, c_long, c_uint, c_ulong},
     fs::File,
     prelude::*,
     seq_file::SeqFile,

@@ -9,6 +9,7 @@ use crate::{
     device::Device,
     error::code::*,
     error::Result,
+    prelude::*,
     transmute::{AsBytes, FromBytes},
     types::ARef,
 };
@@ -37,7 +38,7 @@ pub struct Attrs(u32);
 
 impl Attrs {
     /// Get the raw representation of this attribute.
-    pub(crate) fn as_raw(self) -> crate::ffi::c_ulong {
+    pub(crate) fn as_raw(self) -> c_ulong {
         self.0 as _
     }
 

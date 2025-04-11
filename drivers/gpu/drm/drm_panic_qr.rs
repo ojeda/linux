@@ -893,7 +893,7 @@ impl QrImage<'_> {
 /// They must remain valid for the duration of the function call.
 #[export]
 pub unsafe extern "C" fn drm_panic_qr_generate(
-    url: *const kernel::ffi::c_char,
+    url: *const c_char,
     data: *mut u8,
     data_len: usize,
     data_size: usize,

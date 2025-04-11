@@ -4,6 +4,8 @@
 //!
 //! This module allows Rust code to use the kernel's `spinlock_t`.
 
+use crate::prelude::*;
+
 /// Creates a [`SpinLock`] initialiser with the given name and a newly-created lock class.
 ///
 /// It uses the name if one is given, otherwise it generates one based on the file name and line
@@ -101,11 +103,7 @@ unsafe impl super::Backend for SpinLockBackend {
     type State = bindings::spinlock_t;
     type GuardState = ();
 
-    unsafe fn init(
-        ptr: *mut Self::State,
-        name: *const crate::ffi::c_char,
-        key: *mut bindings::lock_class_key,
-    ) {
+    unsafe fn init(ptr: *mut Self::State, name: *const c_char, key: *mut bindings::lock_class_key) {
         // SAFETY: The safety requirements ensure that `ptr` is valid for writes, and `name` and
         // `key` are valid for read indefinitely.
         unsafe { bindings::__spin_lock_init(ptr, name, key) }

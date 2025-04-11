@@ -12,6 +12,7 @@
 use super::{flags::*, AllocError, Allocator, Flags};
 use core::alloc::Layout;
 use core::cmp;
+use core::ffi::c_void;
 use core::ptr;
 use core::ptr::NonNull;
 
@@ -24,10 +25,10 @@ pub type KVmalloc = Kmalloc;
 
 extern "C" {
     #[link_name = "aligned_alloc"]
-    fn libc_aligned_alloc(align: usize, size: usize) -> *mut crate::ffi::c_void;
+    fn libc_aligned_alloc(align: usize, size: usize) -> *mut c_void;
 
     #[link_name = "free"]
-    fn libc_free(ptr: *mut crate::ffi::c_void);
+    fn libc_free(ptr: *mut c_void);
 }
 
 // SAFETY:
@@ -76,7 +77,7 @@ unsafe impl Allocator for Cmalloc {
         // of writing, this is known to be the case on macOS (but not in glibc).
         //
         // Satisfy the stricter requirement to avoid spurious test failures on some platforms.
-        let min_align = core::mem::size_of::<*const crate::ffi::c_void>();
+        let min_align = core::mem::size_of::<*const c_void>();
         let layout = layout.align_to(min_align).map_err(|_| AllocError)?;
         let layout = layout.pad_to_align();
 

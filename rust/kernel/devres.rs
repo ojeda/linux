@@ -10,7 +10,6 @@ use crate::{
     bindings,
     device::Device,
     error::{Error, Result},
-    ffi::c_void,
     prelude::*,
     revocable::Revocable,
     sync::Arc,
@@ -156,7 +155,7 @@ impl<T> DevresInner<T> {
     }
 
     #[allow(clippy::missing_safety_doc)]
-    unsafe extern "C" fn devres_callback(ptr: *mut kernel::ffi::c_void) {
+    unsafe extern "C" fn devres_callback(ptr: *mut c_void) {
         let ptr = ptr as *mut DevresInner<T>;
         // Devres owned this memory; now that we received the callback, drop the `Arc` and hence the
         // reference.

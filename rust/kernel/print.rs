@@ -6,11 +6,7 @@
 //!
 //! Reference: <https://docs.kernel.org/core-api/printk-basics.html>
 
-use crate::{
-    ffi::{c_char, c_void},
-    prelude::*,
-    str::RawFormatter,
-};
+use crate::{prelude::*, str::RawFormatter};
 use core::fmt;
 
 // Called from `vsprintf` with format specifier `%pA`.

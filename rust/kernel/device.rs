@@ -6,6 +6,7 @@
 
 use crate::{
     bindings,
+    prelude::*,
     str::CStr,
     types::{ARef, Opaque},
 };
@@ -174,10 +175,10 @@ impl Device {
         #[cfg(CONFIG_PRINTK)]
         unsafe {
             bindings::_dev_printk(
-                klevel as *const _ as *const crate::ffi::c_char,
+                klevel as *const _ as *const c_char,
                 self.as_raw(),
                 c_str!("%pA").as_char_ptr(),
-                &msg as *const _ as *const crate::ffi::c_void,
+                &msg as *const _ as *const c_void,
             )
         };
     }

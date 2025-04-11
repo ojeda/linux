@@ -57,7 +57,7 @@ unsafe impl<T: Driver + 'static> driver::RegistrationOps for Adapter<T> {
 }
 
 impl<T: Driver + 'static> Adapter<T> {
-    extern "C" fn probe_callback(pdev: *mut bindings::platform_device) -> kernel::ffi::c_int {
+    extern "C" fn probe_callback(pdev: *mut bindings::platform_device) -> c_int {
         // SAFETY: The platform bus only ever calls the probe callback with a valid pointer to a
         // `struct platform_device`.
         //
