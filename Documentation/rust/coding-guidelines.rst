@@ -191,6 +191,23 @@ or:
 	/// [`struct mutex`]: srctree/include/linux/mutex.h
 
 
+C FFI types
+-----------
+
+Rust kernel code does not use the C FFI types (such as ``c_char``) from
+``core::ffi::*``. Instead, a custom mapping that matches properly the C types
+used in the kernel is provided in the prelude, i.e. ``kernel::prelude::*``.
+
+These types (aliases) should generally be referred directly by their identifier,
+i.e. as a single segment path. For instance:
+
+.. code-block:: rust
+
+	fn f(p: *const c_char) -> c_int {
+	    // ...
+	}
+
+
 Naming
 ------
 
