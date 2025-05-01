@@ -6,6 +6,10 @@
 // and thus add a dependency on `include/config/RUSTC_VERSION_TEXT`, which is
 // touched by Kconfig when the version string from the compiler changes.
 
+// TODO: check that when Rust 1.88.0 is released, this would be enough:
+// #![cfg_attr(not(CONFIG_RUSTC_HAS_SPAN_FILE), feature(proc_macro_span))]
+#![feature(proc_macro_span)]
+
 #[macro_use]
 mod quote;
 mod concat_idents;
