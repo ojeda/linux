@@ -435,7 +435,7 @@ impl<T: ?Sized + ListItem<ID>, const ID: u64> List<T, ID> {
         //  * If `item` was the only item in the list, then `prev == item`, and we just set
         //    `item->next` to null, so this correctly sets `first` to null now that the list is
         //    empty.
-        if self.first == item {
+        if core::ptr::eq(self.first, item) {
             // SAFETY: The `prev` pointer is the value that `item->prev` had when it was in this
             // list, so it must be valid. There is no race since `prev` is still in the list and we
             // still have exclusive access to the list.
@@ -556,7 +556,7 @@ impl<'a, T: ?Sized + ListItem<ID>, const ID: u64> Iterator for Iter<'a, T, ID> {
         let next = unsafe { (*current).next };
         // INVARIANT: If `current` was the last element of the list, then this updates it to null.
         // Otherwise, we update it to the next element.
-        self.current = if next != self.stop {
+        self.current = if !core::ptr::eq(next, self.stop) {
             next
         } else {
             ptr::null_mut()
@@ -726,7 +726,7 @@ impl<'a, T: ?Sized + ListItem<ID>, const ID: u64> Cursor<'a, T, ID> {
     fn prev_ptr(&self) -> *mut ListLinksFields {
         let mut next = self.next;
         let first = self.list.first;
-        if next == first {
+        if core::ptr::eq(next, first) {
             // We are before the first element.
             return core::ptr::null_mut();
         }
@@ -788,7 +788,7 @@ impl<'a, T: ?Sized + ListItem<ID>, const ID: u64> Cursor<'a, T, ID> {
         // access the `next` field.
         let mut next = unsafe { (*self.next).next };
 
-        if next == self.list.first {
+        if core::ptr::eq(next, self.list.first) {
             next = core::ptr::null_mut();
         }
 
@@ -802,7 +802,7 @@ impl<'a, T: ?Sized + ListItem<ID>, const ID: u64> Cursor<'a, T, ID> {
     /// If the cursor is before the first element, then this call does nothing. This call returns
     /// `true` if the cursor's position was changed.
     pub fn move_prev(&mut self) -> bool {
-        if self.next == self.list.first {
+        if core::ptr::eq(self.next, self.list.first) {
             return false;
         }
 
@@ -822,7 +822,7 @@ impl<'a, T: ?Sized + ListItem<ID>, const ID: u64> Cursor<'a, T, ID> {
         // * `ptr` is an element in the list or null.
         // * if `ptr` is null, then `self.list.first` is null so the list is empty.
         let item = unsafe { self.list.insert_inner(item, ptr) };
-        if self.next == self.list.first {
+        if core::ptr::eq(self.next, self.list.first) {
             // INVARIANT: We just inserted `item`, so it's a member of list.
             self.list.first = item;
         }

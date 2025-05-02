@@ -743,7 +743,7 @@ where
     pub fn collect(self, flags: Flags) -> Vec<T, A> {
         let old_layout = self.layout;
         let (mut ptr, buf, len, mut cap) = self.into_raw_parts();
-        let has_advanced = ptr != buf.as_ptr();
+        let has_advanced = !core::ptr::eq(ptr, buf.as_ptr());
 
         if has_advanced {
             // Copy the contents we have advanced to at the beginning of the buffer.
