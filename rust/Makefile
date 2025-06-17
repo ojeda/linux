@@ -57,7 +57,6 @@ RUST_LIB_SRC ?= $(rustc_sysroot)/lib/rustlib/src/rust/library
 ifneq ($(quiet),)
 rust_test_quiet=-q
 rustdoc_test_quiet=--test-args -q
-rustdoc_test_kernel_quiet=>/dev/null
 endif
 
 core-cfgs = \
@@ -224,21 +223,20 @@ quiet_cmd_rustdoc_test_kernel = RUSTDOC TK $<
 	rm -rf $(objtree)/$(obj)/test/doctests/kernel; \
 	mkdir -p $(objtree)/$(obj)/test/doctests/kernel; \
 	OBJTREE=$(abspath $(objtree)) \
-	$(RUSTDOC) --test $(filter-out --remap-path-prefix=%,$(rust_flags)) \
+	$(RUSTDOC) $(filter-out --remap-path-prefix=%,$(rust_flags)) \
 		-L$(objtree)/$(obj) --extern ffi --extern pin_init \
 		--extern kernel --extern build_error --extern macros \
 		--extern bindings --extern uapi \
-		--no-run --crate-name kernel -Zunstable-options \
+		--crate-name kernel -Zunstable-options \
 		--sysroot=/dev/null \
+		--output-format=doctest \
 		$(rustdoc_modifiers_workaround) \
-		--test-builder $(objtree)/scripts/rustdoc_test_builder \
-		$< $(rustdoc_test_kernel_quiet); \
-	$(objtree)/scripts/rustdoc_test_gen
+		$< | $(objtree)/scripts/rustdoc_test_builder
 
 %/doctests_kernel_generated.rs %/doctests_kernel_generated_kunit.c: \
     $(src)/kernel/lib.rs $(obj)/kernel.o \
     $(objtree)/scripts/rustdoc_test_builder \
-    $(objtree)/scripts/rustdoc_test_gen FORCE
+    FORCE
 	+$(call if_changed,rustdoc_test_kernel)
 
 # We cannot use `-Zpanic-abort-tests` because some tests are dynamic,
