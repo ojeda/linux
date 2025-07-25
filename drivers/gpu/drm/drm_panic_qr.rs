@@ -871,6 +871,10 @@ impl QrImage<'_> {
     fn apply_mask(&mut self) {
         for x in 0..self.width {
             for y in 0..self.width {
+                #[cfg_attr(
+                    CONFIG_RUSTC_HAS_CLIPPY_MANUAL_IS_MULTIPLE_OF,
+                    allow(clippy::manual_is_multiple_of)
+                )]
                 if (x ^ y) % 2 == 0 && !self.is_reserved(x, y) {
                     self.xor(x, y);
                 }
