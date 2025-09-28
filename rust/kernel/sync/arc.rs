@@ -20,6 +20,7 @@ use crate::{
     alloc::{AllocError, Flags, KBox},
     bindings,
     ffi::c_void,
+    fmt,
     init::InPlaceInit,
     try_init,
     types::{ForeignOwnable, Opaque},
@@ -27,7 +28,6 @@ use crate::{
 use core::{
     alloc::Layout,
     borrow::{Borrow, BorrowMut},
-    fmt,
     marker::PhantomData,
     mem::{ManuallyDrop, MaybeUninit},
     ops::{Deref, DerefMut},
@@ -373,10 +373,10 @@ impl<T: ?Sized> Arc<T> {
     }
 }
 
-// SAFETY: The pointer returned by `into_foreign` comes from a well aligned
-// pointer to `ArcInner<T>`.
+// SAFETY: The pointer returned by `into_foreign` was originally allocated as an
+// `KBox<ArcInner<T>>`, so that type is what determines the alignment.
 unsafe impl<T: 'static> ForeignOwnable for Arc<T> {
-    const FOREIGN_ALIGN: usize = core::mem::align_of::<ArcInner<T>>();
+    const FOREIGN_ALIGN: usize = <KBox<ArcInner<T>> as ForeignOwnable>::FOREIGN_ALIGN;
 
     type Borrowed<'a> = ArcBorrow<'a, T>;
     type BorrowedMut<'a> = Self::Borrowed<'a>;
