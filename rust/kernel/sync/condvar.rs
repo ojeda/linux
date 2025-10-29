@@ -46,7 +46,7 @@ pub use new_condvar;
 /// use kernel::sync::{new_condvar, new_mutex, CondVar, Mutex};
 ///
 /// #[pin_data]
-/// pub struct Example {
+/// struct Example {
 ///     #[pin]
 ///     value: Mutex<u32>,
 ///
